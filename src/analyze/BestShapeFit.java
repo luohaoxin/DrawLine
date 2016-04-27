@@ -6,7 +6,7 @@ public class BestShapeFit {
 
 	public native void updatePoint(float x, float y);
 
-	public native String finishPoint(float x, float y);
+	public native float finishPoint(float x, float y);
 
 	/*
 	 * this is used to load the 'hello-jni' library on application startup. The

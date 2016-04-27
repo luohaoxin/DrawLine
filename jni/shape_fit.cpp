@@ -39,6 +39,8 @@ luohaoxin * lpoint;
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
 	lpoint=new luohaoxin();
+	lpoint->a=0;
+	lpoint->a++;
 }
 
 /*
@@ -48,6 +50,7 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
+	lpoint->a++;
 
 }
 
@@ -56,15 +59,18 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  * Method:    finishPoint
  * Signature: (FF)Ljava/lang/String;
  */
-jstring Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
+jfloat Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-	int a = lpoint->getInt();
-	if (a == 123) {
-		//		return (env)->NewStringUTF(env, "123");
-		return env->NewStringUTF("12131213!");
-	} else {
-		return env->NewStringUTF("Hello World JNI!");
-	}
+//	int a = lpoint->getInt();
+//	char * result="luohaoxin";
+//	if (a == 123) {
+//		//		return (env)->NewStringUTF(env, "123");
+//		return env->NewStringUTF(result);
+//	} else {
+//		return env->NewStringUTF(result);
+//	}
+	lpoint->a++;
+	return lpoint->a;
 }
 #ifdef __cplusplus
 

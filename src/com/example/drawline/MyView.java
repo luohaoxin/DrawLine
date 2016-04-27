@@ -3,6 +3,7 @@ package com.example.drawline;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import analyze.BestShapeFit;
 import analyze.PreAnalyzeFit;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 import fit.Drawable;
 import fit.EllipseFit;
 import fit.LineFit;
@@ -43,20 +45,26 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 	Paint paint = new Paint(); // 创建画笔
 	ShapeFit shapeFit;
 	PreAnalyzeFit preAnalyzeFit;
+	BestShapeFit bestShapeFit = new BestShapeFit();
+	Context context;
 
 	public MyView(Context context) {
+
 		super(context);
-		init();
+		init(context);
 	}
 
 	public MyView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init();
+		init(context);
 	}
 
 	Bitmap bitmap;
+	Toast toast;
 
-	private void init() {
+	private void init(Context context) {
+		this.context = context;
+		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 		Log.i("luohaoxin", "surface()");
 		bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 		cacheBitmap = Bitmap.createBitmap(getResources().getDisplayMetrics().widthPixels,
@@ -124,6 +132,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 		Log.i("luohaoxin", "onTouchEvent:" + event.getActionMasked() + " " + event.getPointerCount());
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+			bestShapeFit.startPoint(x, y);
 			path.moveTo(x, y);
 			shapeFit = new EllipseFit();
 			shapeFit.inputPoint(x, y);
@@ -133,6 +142,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
+			bestShapeFit.updatePoint(x, y);
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
 			shapeFit.inputPoint(x, y);
 			taskQueue.add(new PathDrawTask(preX, preY, x, y, path));
@@ -141,6 +151,9 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_UP:
+			toast.setText(bestShapeFit.finishPoint(x, y) + "");
+			toast.show();
+
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
 			taskQueue.add(new PathDrawTask(preX, preY, x, y, path));
 			path = new Path();
@@ -149,15 +162,12 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			shapeFit.compute();
 			preAnalyzeFit.inputPoint(x, y, true);
 			Drawable preDrawable = preAnalyzeFit.getResultDrawable();
-			if(preDrawable instanceof LineFit)
-			{
-				
-			}
-			else {
+			if (preDrawable instanceof LineFit) {
+
+			} else {
 				shapeFit.compute();
-				if(shapeFit.errorValue<10E7)
-				{
-					preDrawable=shapeFit;
+				if (shapeFit.errorValue < 10E7) {
+					preDrawable = shapeFit;
 				}
 			}
 			if (preDrawable != null) {

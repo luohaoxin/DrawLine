@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		new BestShapeFit().startPoint(0, 0);
-		Toast.makeText(this, new BestShapeFit().finishPoint(0, 0), 1000).show();
+		Toast.makeText(this, new BestShapeFit().finishPoint(0, 0) + "", 1000).show();
 		Log.i("compute", "x" + getResources().getDisplayMetrics().widthPixels + "y"
 				+ getResources().getDisplayMetrics().heightPixels);
 	}

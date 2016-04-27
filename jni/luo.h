@@ -8,13 +8,12 @@
 #ifndef LUO_H_
 #define LUO_H_
 
-class luohaoxin{
+class luohaoxin {
 public:
-	int a=123;
-	int getInt();
+	luohaoxin();
+	float a;
+	float getInt();
+
 };
-
-
-
 
 #endif /* LUO_H_ */

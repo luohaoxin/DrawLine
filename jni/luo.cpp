@@ -6,6 +6,9 @@
  */
 
 #include"luo.h"
-int luohaoxin::getInt(){
-	return a++;
+luohaoxin::luohaoxin() {
+	a = 0;
+}
+float luohaoxin::getInt() {
+	return a;
 }
