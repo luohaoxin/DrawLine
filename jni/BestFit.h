@@ -5,8 +5,8 @@
  *      Author: luohaoxin
  */
 
-#ifndef LUO_H_
-#define LUO_H_
+#ifndef BESTFIT_H_
+#define BESTFIT_H_
 
 class luohaoxin {
 public:
@@ -16,4 +16,4 @@ public:
 
 };
 
-#endif /* LUO_H_ */
+#endif /* BESTFIT_H_ */

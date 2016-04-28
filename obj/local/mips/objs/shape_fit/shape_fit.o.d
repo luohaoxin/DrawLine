@@ -6,7 +6,8 @@ obj/local/mips/objs/shape_fit/shape_fit.o: jni/shape_fit.cpp \
  /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/malloc.h \
  /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/xlocale.h \
  /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/jni.h \
- jni/luo.h
+ jni/BestFit.h \
+ /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/android/log.h
 
 /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/string.h:
 
@@ -22,4 +23,6 @@ obj/local/mips/objs/shape_fit/shape_fit.o: jni/shape_fit.cpp \
 
 /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/jni.h:
 
-jni/luo.h:
+jni/BestFit.h:
+
+/Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/android/log.h:

@@ -17,7 +17,8 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := shape_fit
-LOCAL_SRC_FILES := shape_fit.cpp luo.cpp
-
+LOCAL_SRC_FILES := shape_fit.cpp BestFit.cpp
+# for logging
+LOCAL_LDLIBS    += -llog
 include $(BUILD_SHARED_LIBRARY)
 

@@ -5,7 +5,7 @@
  *      Author: luohaoxin
  */
 
-#include"luo.h"
+#include"BestFit.h"
 luohaoxin::luohaoxin() {
 	a = 0;
 }

@@ -16,21 +16,20 @@
  */
 #include <string.h>
 #include <jni.h>
-#include"luo.h"
-/* This is a trivial JNI example where we use a native method
- * to return a new VM String. See the corresponding Java source
- * file located at:
- *
- *   apps/samples/hello-jni/project/src/com/example/hellojni/HelloJni.java
- */
+#include"BestFit.h"
+// for __android_log_print(ANDROID_LOG_INFO, "YourApp", "formatted message");
+#include <android/log.h>
+#define TAG "ShapeFit"
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 #ifdef __cplusplus
 
 extern "C" {
 
 #endif
 using namespace std;
+
 luohaoxin l;
-luohaoxin * lpoint;
+//luohaoxin * lpoint;
 /*
  * Class:     analyze_BestShapeFit
  * Method:    startPoint
@@ -38,9 +37,12 @@ luohaoxin * lpoint;
  */
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-	lpoint=new luohaoxin();
-	lpoint->a=0;
-	lpoint->a++;
+//	lpoint=new luohaoxin();
+//	lpoint->a=0;
+//	(*lpoint).a++;
+	l.a=0;
+	l.a++;
+	LOGV("startPoint");
 }
 
 /*
@@ -50,8 +52,10 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-	lpoint->a++;
-
+//	lpoint->a++;
+//	(*lpoint).a++;
+	l.a++;
+	LOGV("updatePoint");
 }
 
 /*
@@ -61,16 +65,10 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 jfloat Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-//	int a = lpoint->getInt();
-//	char * result="luohaoxin";
-//	if (a == 123) {
-//		//		return (env)->NewStringUTF(env, "123");
-//		return env->NewStringUTF(result);
-//	} else {
-//		return env->NewStringUTF(result);
-//	}
-	lpoint->a++;
-	return lpoint->a;
+//	lpoint->a++;
+	l.a++;
+	LOGV("finishPoint");
+	return l.a;
 }
 #ifdef __cplusplus
 
