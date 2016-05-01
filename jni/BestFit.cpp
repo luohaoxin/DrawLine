@@ -6,9 +6,19 @@
  */
 
 #include"BestFit.h"
-luohaoxin::luohaoxin() {
+BestFit::BestFit() {
 	a = 0;
 }
-float luohaoxin::getInt() {
+void BestFit::startPoint(float x,float y)
+{
+	a=0;
+}
+void BestFit::updatePoint(float x,float y)
+{
+	a++;
+}
+float BestFit::finishPoint(float x,float y)
+{
+	a++;
 	return a;
 }

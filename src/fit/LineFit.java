@@ -10,7 +10,6 @@ import android.util.Log;
 
 public class LineFit extends ShapeFit {
 	public float a, b;
-	ArrayList<PointF> outputList = new ArrayList<PointF>();
 	ArrayList<Float> result = new ArrayList<Float>();
 
 	public LineFit() {
@@ -27,6 +26,7 @@ public class LineFit extends ShapeFit {
 		super.inputPoint(x, y);
 	}
 
+	@Override
 	public void compute() {
 		float t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 		float e = 0;
@@ -43,7 +43,7 @@ public class LineFit extends ShapeFit {
 			temp = inputList.get(i).y - b - a * inputList.get(i).x;
 			e += (temp * temp);
 		}
-		errorValue=e / inputList.size();
+		errorValue = e / inputList.size();
 		Log.i("compute", "a:" + a + "b:" + b + "  e:" + (e / inputList.size()) + "n:" + inputList.size());
 		result = new ArrayList<Float>();
 		PointF first = inputList.get(0);
@@ -71,11 +71,12 @@ public class LineFit extends ShapeFit {
 		}
 	}
 
+	@Override
 	public void clear() {
 		inputList = new ArrayList<PointF>();
-		outputList = new ArrayList<PointF>();
 	}
 
+	@Override
 	public void draw(Canvas canvas, Paint paint) {
 
 		canvas.drawLine(result.get(0), result.get(1), result.get(2), result.get(3), paint);
@@ -87,6 +88,6 @@ public class LineFit extends ShapeFit {
 		Matrix AMatrix = new Matrix(Afloat);
 		Matrix BMatrix = new Matrix(Bfloat);
 		Matrix XMatrix = AMatrix.solve(BMatrix);
-		return new PointF((float)(XMatrix.getArray()[0][0]),(float)(XMatrix.getArray()[1][0]));
+		return new PointF((float) (XMatrix.getArray()[0][0]), (float) (XMatrix.getArray()[1][0]));
 	}
 }

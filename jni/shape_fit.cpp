@@ -28,8 +28,7 @@ extern "C" {
 #endif
 using namespace std;
 
-luohaoxin l;
-//luohaoxin * lpoint;
+BestFit bestfit;
 /*
  * Class:     analyze_BestShapeFit
  * Method:    startPoint
@@ -37,11 +36,7 @@ luohaoxin l;
  */
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-//	lpoint=new luohaoxin();
-//	lpoint->a=0;
-//	(*lpoint).a++;
-	l.a=0;
-	l.a++;
+	bestfit.startPoint(x,y);
 	LOGV("startPoint");
 }
 
@@ -52,9 +47,7 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-//	lpoint->a++;
-//	(*lpoint).a++;
-	l.a++;
+	bestfit.updatePoint(x,y);
 	LOGV("updatePoint");
 }
 
@@ -65,10 +58,9 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 jfloat Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-//	lpoint->a++;
-	l.a++;
+	bestfit.finishPoint(x,y);
 	LOGV("finishPoint");
-	return l.a;
+	return bestfit.a;
 }
 #ifdef __cplusplus
 

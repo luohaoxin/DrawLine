@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import Jama.Matrix;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -14,10 +13,10 @@ public class EllipseFit extends ShapeFit {
 	Matrix AMatrix, BMatrix;
 	double[][] Afloat = new double[5][5];
 	double[][] Bfloat = new double[5][1];
-	ArrayList<PointF> inputList = new ArrayList<PointF>();
 
 	double xc, yc, a, b, angle;
 
+	@Override
 	public void inputPoint(float x, float y) {
 		inputList.add(new PointF(x, y));
 	}
@@ -104,12 +103,12 @@ public class EllipseFit extends ShapeFit {
 		errorValue = e / inputList.size();
 		Log.e("compute", "e/n:" + (e / inputList.size()) + "n:" + inputList.size());
 
-		//判断是否是椭圆，有可能是双曲线
+		// 判断是否是椭圆，有可能是双曲线
 		if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
 			Log.e("compute", "is a Ellipse");
 		} else {
 			Log.e("compute", "not a Ellipse");
-			errorValue=10E10;
+			errorValue = 10E10;
 		}
 
 	}

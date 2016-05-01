@@ -8,12 +8,13 @@
 #ifndef BESTFIT_H_
 #define BESTFIT_H_
 
-class luohaoxin {
+class BestFit {
 public:
-	luohaoxin();
+	BestFit();
 	float a;
-	float getInt();
-
+	void startPoint(float x,float y);
+	void updatePoint(float x,float y);
+	float finishPoint(float x,float y);
 };
 
 #endif /* BESTFIT_H_ */

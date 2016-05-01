@@ -159,7 +159,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			path = new Path();
 
 			shapeFit.inputPoint(x, y);
-			shapeFit.compute();
+			// shapeFit.compute();
 			preAnalyzeFit.inputPoint(x, y, true);
 			Drawable preDrawable = preAnalyzeFit.getResultDrawable();
 			if (preDrawable instanceof LineFit) {
