@@ -151,7 +151,9 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_UP:
-			toast.setText(bestShapeFit.finishPoint(x, y) + "");
+			float[] line = bestShapeFit.finishPoint(x, y);
+
+			toast.setText(line[0] + " " + line[1]);
 			toast.show();
 
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
