@@ -12,6 +12,8 @@
 class BestFit {
 public:
 	BestFit();
+    PointF sPoint;
+    PointF fPoint;
 	vector<Line> lineList;
 	Line currentLine;
 	vector<LineFit> lineFitList;

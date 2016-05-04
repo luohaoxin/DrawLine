@@ -18,6 +18,7 @@ using namespace std;
 #define TAG "ShapeFit"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 #define MAX_LINE_ANGLE_DIFFER 15
+#define leastLineLongLengthSquare 0.1f
 BestFit::BestFit() {
 }
 BestFit::~BestFit()
@@ -46,6 +47,8 @@ void BestFit::inputPoint(float x, float y, bool isFinished) {
     }
 }
 void BestFit::startPoint(float x, float y) {
+    sPoint.x=x;
+    sPoint.y=y;
     reset();
     inputPoint(x, y, false);
     ellipseFit.clear();
@@ -56,6 +59,8 @@ void BestFit::updatePoint(float x, float y) {
     ellipseFit.inputPoint(x, y);
 }
 float * BestFit::finishPoint(float x, float y) {
+    fPoint.x=x;
+    fPoint.y=y;
     inputPoint(x, y, true);
     ellipseFit.inputPoint(x, y);
     return getResult();
@@ -150,7 +155,9 @@ float * BestFit::getResult() {
     float * result;
     ellipseFit.compute();
     LOGV("lineFitList size %d", lineFitList.size());
-    if (lineFitList.size() == 1) {
+    float deltaX=sPoint.x-fPoint.x;
+    float deltaY=sPoint.y-fPoint.y;
+    if (lineFitList.size() == 1&&deltaX*deltaX+deltaY*deltaY>leastLineLongLengthSquare) {
         LineFit lineFit=lineFitList[0];
         result=new float[5];
         result[0]=1;
@@ -159,6 +166,7 @@ float * BestFit::getResult() {
         result[3]=lineFit.endPoint.x;
         result[4]=lineFit.endPoint.y;
     }else{
+        ellipseFit.compute();
         if(ellipseFit.checkEllipse())
         {
             result=new float[6];
