@@ -14,6 +14,9 @@
 #include "Eigen/Dense"
 using Eigen::MatrixXf;
 using namespace std;
+#include <android/log.h>
+#define TAG "ShapeFit"
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 #define MAX_LINE_ANGLE_DIFFER 15
 BestFit::BestFit() {
 }
@@ -145,6 +148,8 @@ PointF BestFit::getCrossPoint(LineFit * oneLine,LineFit * twoLine)
 }
 float * BestFit::getResult() {
     float * result;
+    ellipseFit.compute();
+    LOGV("lineFitList size %d", lineFitList.size());
     if (lineFitList.size() == 1) {
         LineFit lineFit=lineFitList[0];
         result=new float[5];
@@ -154,7 +159,6 @@ float * BestFit::getResult() {
         result[3]=lineFit.endPoint.x;
         result[4]=lineFit.endPoint.y;
     }else{
-        ellipseFit.compute();
         if(ellipseFit.checkEllipse())
         {
             result=new float[6];

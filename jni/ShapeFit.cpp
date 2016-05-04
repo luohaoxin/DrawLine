@@ -8,12 +8,17 @@
 #include <iostream>
 #include<math.h>
 #include "Eigen/Dense"
+#include <android/log.h>
+#define TAG "ShapeFit"
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 using namespace std;
 //line
 #define acceptDeltaAngleSumValue 25
-#define acceptErrorValue 15
-#define leastLineLongLengthSquare 100 * 100 //px
-#define maxEllipseError 10E8
+#define acceptDeltaAnlgeAbsSumValue 15
+#define leastLineLongLengthSquare 0.01f
+//Ellipse
+#define maxEllipseError 0.00005
+
 PointF::PointF(float x, float y) {
     this->x = x;
     this->y = y;
@@ -69,7 +74,7 @@ bool Line::inputPoint(float x, float y) {
             float angle = asin(dy / sqrt((dx * dx + dy * dy))) * 180 / M_PI;
             float deltaAngle = angle - lastAngle;
             float deltaAnlgeAbs = fabs(deltaAngle);
-            if (deltaAnlgeAbs < acceptErrorValue) {
+            if (deltaAnlgeAbs < acceptDeltaAnlgeAbsSumValue) {
                 deltaAngleSum += deltaAngle;
                 deltaAngleAbsSum += deltaAnlgeAbs;
                 if (fabs(deltaAngleSum) < acceptDeltaAngleSumValue) {
@@ -270,6 +275,7 @@ void EllipseFit::compute() {
     }
     errorValue = e / inputList.size();
     cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
+    LOGV("EllipseFit errorValue %f", errorValue);
     // 判断是否是椭圆，有可能是双曲线
     if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
         
