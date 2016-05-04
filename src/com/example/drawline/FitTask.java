@@ -17,7 +17,7 @@ public class FitTask implements DrawTask {
 		Paint paint2 = new Paint();
 		paint2.setColor(Color.WHITE);
 		cacheCanvas.drawPaint(paint2);
-		// shapeFit.draw(cacheCanvas, paint);
+		shapeFit.draw(cacheCanvas, paint);
 		canvas.drawBitmap(MyView.cacheBitmap, 0, 0, null);
 	}
 

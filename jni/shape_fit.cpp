@@ -29,6 +29,7 @@ extern "C" {
 using namespace std;
 
 BestFit bestfit;
+float * data;
 /*
  * Class:     analyze_BestShapeFit
  * Method:    startPoint
@@ -36,6 +37,8 @@ BestFit bestfit;
  */
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
+	LOGV("startPoint");
+//	bestfit=new BestFit();
 	bestfit.startPoint(x, y);
 	LOGV("startPoint");
 }
@@ -47,6 +50,7 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
+	LOGV("updatePoint");
 	bestfit.updatePoint(x, y);
 	LOGV("updatePoint");
 }
@@ -58,18 +62,45 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 jfloatArray Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-	bestfit.finishPoint(x, y);
+	LOGV("finishPoint");
+	data = bestfit.finishPoint(x, y);
+//	delete bestfit;
 	LOGV("finishPoint");
 
 	jfloatArray result;
-	result = env->NewFloatArray(3);
-	float * data = new float[3];
-	data[0] = 123;
-	data[1] = 456;
-	data[2] = 789;
-
-	env->SetFloatArrayRegion(result, 0, 3, data);
-	delete data;
+	int type = (int) (data[0]);
+	int size = 1;
+	switch (type) {
+	case 1:
+		result = env->NewFloatArray(5);
+		size = 5;
+		break;
+	case 2:
+		result = env->NewFloatArray(6);
+		size = 6;
+		break;
+	case 3:
+		result = env->NewFloatArray(7);
+		size = 7;
+		break;
+	case 4:
+		result = env->NewFloatArray(9);
+		size = 9;
+		break;
+	case 0:
+		result = env->NewFloatArray(1);
+		size = 1;
+		break;
+	default:
+		result = env->NewFloatArray(1);
+		size = 1;
+		break;
+	}
+	LOGV("result size %d", size);
+	env->SetFloatArrayRegion(result, 0, size, data);
+	LOGV("end");
+	delete []data;
+	LOGV("end2");
 	return result;
 }
 #ifdef __cplusplus

@@ -1,6 +1,5 @@
 package com.example.drawline;
 
-import analyze.BestShapeFit;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -20,8 +19,6 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		new BestShapeFit().startPoint(0, 0);
-		Toast.makeText(this, new BestShapeFit().finishPoint(0, 0) + "", 1000).show();
 		Log.i("compute", "x" + getResources().getDisplayMetrics().widthPixels + "y"
 				+ getResources().getDisplayMetrics().heightPixels);
 	}

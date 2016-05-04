@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,8 +23,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 import fit.Drawable;
-import fit.EllipseFit;
-import fit.LineFit;
 import fit.ShapeFit;
 
 @SuppressLint("ClickableViewAccessibility")
@@ -103,7 +102,6 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		} finally {
 			if (canvas != null) {
@@ -134,44 +132,48 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_DOWN:
 			bestShapeFit.startPoint(x, y);
 			path.moveTo(x, y);
-			shapeFit = new EllipseFit();
-			shapeFit.inputPoint(x, y);
-			preAnalyzeFit = new PreAnalyzeFit();
-			preAnalyzeFit.inputPoint(x, y, false);
+			// shapeFit = new EllipseFit();
+			// shapeFit.inputPoint(x, y);
+			// preAnalyzeFit = new PreAnalyzeFit();
+			// preAnalyzeFit.inputPoint(x, y, false);
 			preX = x;
 			preY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
 			bestShapeFit.updatePoint(x, y);
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
-			shapeFit.inputPoint(x, y);
+			// shapeFit.inputPoint(x, y);
+			// preAnalyzeFit.inputPoint(x, y, false);
 			taskQueue.add(new PathDrawTask(preX, preY, x, y, path));
-			preAnalyzeFit.inputPoint(x, y, false);
 			preX = x;
 			preY = y;
 			break;
 		case MotionEvent.ACTION_UP:
 			float[] line = bestShapeFit.finishPoint(x, y);
-
-			toast.setText(line[0] + " " + line[1]);
+			String text = "show";
+			for (int i = 0; i < line.length; i++) {
+				text = text + " " + line[i] + " ";
+			}
+			toast.setText(text);
 			toast.show();
 
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
 			taskQueue.add(new PathDrawTask(preX, preY, x, y, path));
 			path = new Path();
 
-			shapeFit.inputPoint(x, y);
+			// shapeFit.inputPoint(x, y);
 			// shapeFit.compute();
-			preAnalyzeFit.inputPoint(x, y, true);
-			Drawable preDrawable = preAnalyzeFit.getResultDrawable();
-			if (preDrawable instanceof LineFit) {
-
-			} else {
-				shapeFit.compute();
-				if (shapeFit.errorValue < 10E7) {
-					preDrawable = shapeFit;
-				}
-			}
+			// preAnalyzeFit.inputPoint(x, y, true);
+			// Drawable preDrawable = preAnalyzeFit.getResultDrawable();
+			// if (preDrawable instanceof LineFit) {
+			//
+			// } else {
+			// shapeFit.compute();
+			// if (shapeFit.errorValue < 10E7) {
+			// preDrawable = shapeFit;
+			// }
+			// }
+			Drawable preDrawable = getResultDrawable(line);
 			if (preDrawable != null) {
 				taskQueue.add(new FitTask(preDrawable));
 			}
@@ -180,6 +182,68 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		// 返回true表明处理方法已经处理该事件
 		return true;
+	}
+
+	public Drawable getResultDrawable(final float[] result) {
+		Drawable resultDrawable = null;
+		int type = (int) (result[0]);
+		// Toast.makeText(getContext(), "" + result.length, 1000).show();
+		switch (type) {
+		case 1:
+			resultDrawable = new Drawable() {
+				@Override
+				public void draw(Canvas canvas, Paint paint) {
+					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
+
+				}
+			};
+			break;
+		case 2:
+			resultDrawable = new Drawable() {
+				@Override
+				public void draw(Canvas canvas, Paint paint) {
+					float xc = result[1];
+					float yc = result[2];
+					float a = result[3];
+					float b = result[4];
+					float angle = result[5];
+					canvas.save();
+					canvas.rotate(angle, xc, yc);
+					RectF oval = new RectF(xc - a, yc - b, xc + a, yc + b);
+					canvas.drawOval(oval, paint);
+					canvas.restore();
+				}
+			};
+			break;
+		case 3:
+			resultDrawable = new Drawable() {
+				@Override
+				public void draw(Canvas canvas, Paint paint) {
+					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
+					canvas.drawLine(result[3], result[4], result[5], result[6], paint);
+					canvas.drawLine(result[5], result[6], result[1], result[2], paint);
+				}
+			};
+			break;
+		case 4:
+			resultDrawable = new Drawable() {
+				@Override
+				public void draw(Canvas canvas, Paint paint) {
+					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
+					canvas.drawLine(result[3], result[4], result[5], result[6], paint);
+					canvas.drawLine(result[5], result[6], result[7], result[8], paint);
+					canvas.drawLine(result[7], result[8], result[1], result[2], paint);
+				}
+			};
+			break;
+		case 0:
+
+			break;
+		default:
+
+			break;
+		}
+		return resultDrawable;
 	}
 
 	@Override
