@@ -9,7 +9,7 @@
 #define SHAPEFIT_H_
 #include<vector>
 #include "Eigen/Dense"
-using Eigen::MatrixXd;
+using Eigen::MatrixXf;
 using namespace std;
 class PointF {
 public:
@@ -21,12 +21,9 @@ public:
 };
 class Line {
 public:
-	float acceptDeltaAngleSumValue;
-	float acceptErrorValue;
-	float leastLineLongLengthSquare; //px
-	double lastAngle;
-	double deltaAngleSum;
-	double deltaAngleAbsSum;
+	float lastAngle;
+	float deltaAngleSum;
+	float deltaAngleAbsSum;
 	PointF lastPoint;
 	vector<PointF> inputList;
 	Line();
@@ -37,7 +34,7 @@ public:
 };
 class ShapeFit {
 public:
-	double errorValue;
+	float errorValue;
 	vector<PointF> inputList;
 	ShapeFit();
 	void inputPoint(float x, float y);
@@ -59,12 +56,13 @@ public:
 };
 class EllipseFit: public ShapeFit {
 public:
-    MatrixXd AMatrix;
-    MatrixXd BMatrix;
-    double xc, yc, a, b, angle;
+    MatrixXf AMatrix;
+    MatrixXf BMatrix;
+    float xc, yc, a, b, angle;
     EllipseFit();
     void setInputPoint(vector<PointF> input);
 	void compute();
+    bool checkEllipse();
 	void clear();
 	~EllipseFit();
 };

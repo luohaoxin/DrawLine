@@ -12,8 +12,9 @@
 #include<list>
 #include<deque>
 #include "Eigen/Dense"
-using Eigen::MatrixXd;
+using Eigen::MatrixXf;
 using namespace std;
+#define MAX_LINE_ANGLE_DIFFER 15
 BestFit::BestFit() {
 }
 BestFit::~BestFit()
@@ -77,7 +78,7 @@ bool BestFit::mergeSimilarLines() {
 bool BestFit::mergeLinesIfNeed(int oneIndex, int twoIndex) {
     LineFit * one = &(lineFitList[oneIndex]);
     LineFit * two = &(lineFitList[twoIndex]);
-    if (fabs((atan(one->a) - atan(two->a))) * 180 / M_PI < 15) {
+    if (fabs((atan(one->a) - atan(two->a))) * 180 / M_PI < MAX_LINE_ANGLE_DIFFER) {
         vector<PointF> mergedPoints;
         one->inputList.insert(one->inputList.end(), two->inputList.begin(),
                               two->inputList.end());
@@ -123,20 +124,20 @@ float * BestFit::getRectangle()
 }
 PointF BestFit::getCrossPoint(LineFit * oneLine,LineFit * twoLine)
 {
-    //    double[][] Afloat = { { a, -1 }, { other.a, -1 } };
-    //    double[][] Bfloat = { { -b }, { -other.b } };
+    //    float[][] Afloat = { { a, -1 }, { other.a, -1 } };
+    //    float[][] Bfloat = { { -b }, { -other.b } };
     //    Matrix AMatrix = new Matrix(Afloat);
     //    Matrix BMatrix = new Matrix(Bfloat);
     //    Matrix XMatrix = AMatrix.solve(BMatrix);
-    Eigen::MatrixXd AMatrix(2,2);
+    Eigen::MatrixXf AMatrix(2,2);
     AMatrix(0,0)=oneLine->a;
     AMatrix(0,1)=-1;
     AMatrix(1,0)=twoLine->a;
     AMatrix(1,1)=-1;
-    Eigen::MatrixXd BMatrix(2,1);
+    Eigen::MatrixXf BMatrix(2,1);
     BMatrix(0,0)=-oneLine->b;
     BMatrix(1,0)=-twoLine->b;
-    Eigen::MatrixXd XMatrix=AMatrix.inverse()*BMatrix;
+    Eigen::MatrixXf XMatrix=AMatrix.inverse()*BMatrix;
     PointF result;
     result.x=XMatrix(0,0);
     result.y=XMatrix(1,0);
@@ -154,7 +155,7 @@ float * BestFit::getResult() {
         result[4]=lineFit.endPoint.y;
     }else{
         ellipseFit.compute();
-        if(ellipseFit.errorValue< 10E7)
+        if(ellipseFit.checkEllipse())
         {
             result=new float[6];
             result[0]=2;
@@ -213,13 +214,13 @@ int main(int argc, char *argv[]) {
     //
     //    cout<<"result:"<<result[0]<<" "<<result[1]<<endl;
     
-    //    MatrixXd m(2,2);
+    //    MatrixXf m(2,2);
     //    m(0,0) = 2;
     //    m(0,1) = 1;
     //    m(1,0) = 1;
     //    m(1,1) = 2;
     //    m=m.inverse();
-    //    Eigen::MatrixXd m2(2,1);
+    //    Eigen::MatrixXf m2(2,1);
     //    m2(0,0)=3;
     //    m2(1,0)=3;
     //    m2=m*m2;

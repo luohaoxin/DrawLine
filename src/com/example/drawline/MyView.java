@@ -60,8 +60,10 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 
 	Bitmap bitmap;
 	Toast toast;
+	int width;
 
 	private void init(Context context) {
+		width = getResources().getDisplayMetrics().widthPixels;
 		this.context = context;
 		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 		Log.i("luohaoxin", "surface()");

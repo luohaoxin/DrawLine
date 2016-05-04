@@ -9,6 +9,11 @@
 #include<math.h>
 #include "Eigen/Dense"
 using namespace std;
+//line
+#define acceptDeltaAngleSumValue 25
+#define acceptErrorValue 15
+#define leastLineLongLengthSquare 100 * 100 //px
+#define maxEllipseError 10E8
 PointF::PointF(float x, float y) {
     this->x = x;
     this->y = y;
@@ -22,18 +27,12 @@ PointF::~PointF() {
     cout<<"PointF::~PointF()"<<endl;
 }
 Line::Line() {
-    acceptDeltaAngleSumValue = 25;
-    acceptErrorValue = 15;
-    leastLineLongLengthSquare = 100 * 100; //px
     lastAngle = 0;
     deltaAngleSum = 0;
     deltaAngleAbsSum = 0;
     inputList.clear();
 }
 Line::Line(const Line & c){
-    this->acceptDeltaAngleSumValue=c.acceptDeltaAngleSumValue;
-    this->acceptErrorValue=c.acceptErrorValue;
-    this->leastLineLongLengthSquare=c.leastLineLongLengthSquare; //px
     this->lastAngle=c.lastAngle;
     this->deltaAngleSum=c.deltaAngleSum;
     this->deltaAngleAbsSum=c.deltaAngleAbsSum;
@@ -55,7 +54,7 @@ bool Line::inputPoint(float x, float y) {
         if (dx == 0 && dy == 0) {
             ;
         } else {
-            double angle = asin(dy / sqrt((dx * dx + dy * dy))) * 180 / M_PI;
+            float angle = asin(dy / sqrt((dx * dx + dy * dy))) * 180 / M_PI;
             lastAngle = angle;
             inputList.push_back(inputPoint);
             lastPoint = inputPoint;
@@ -67,9 +66,9 @@ bool Line::inputPoint(float x, float y) {
         if (dx == 0 && dy == 0) {
             return true;
         } else {
-            double angle = asin(dy / sqrt((dx * dx + dy * dy))) * 180 / M_PI;
-            double deltaAngle = angle - lastAngle;
-            double deltaAnlgeAbs = fabs(deltaAngle);
+            float angle = asin(dy / sqrt((dx * dx + dy * dy))) * 180 / M_PI;
+            float deltaAngle = angle - lastAngle;
+            float deltaAnlgeAbs = fabs(deltaAngle);
             if (deltaAnlgeAbs < acceptErrorValue) {
                 deltaAngleSum += deltaAngle;
                 deltaAngleAbsSum += deltaAnlgeAbs;
@@ -238,19 +237,19 @@ void EllipseFit::compute() {
         BMatrix(4,0) += -xx;
         
     }
-    Eigen::MatrixXd XMatrix = AMatrix.inverse()*BMatrix;
+    Eigen::MatrixXf XMatrix = AMatrix.inverse()*BMatrix;
     cout<<"compute "<<"X:"<<XMatrix;
-    double B = XMatrix(0,0);
-    double C = XMatrix(1,0);
-    double D = XMatrix(2,0);
-    double E = XMatrix(3,0);
-    double F = XMatrix(4,0);
+    float B = XMatrix(0,0);
+    float C = XMatrix(1,0);
+    float D = XMatrix(2,0);
+    float E = XMatrix(3,0);
+    float F = XMatrix(4,0);
     xc = (B * E - 2 * C * D) / (4 * C - B * B);
     yc = (B * D - 2 * E) / (4 * C - B * B);
     
-    double fenzi = 2 * (B * D * E - C * D * D - E * E + 4 * F * C - B * B * F);
-    double fenmu = (B * B - 4 * C) * (C - sqrt(B * B + (1 - C) * (1 - C)) + 1);
-    double femmu2 = (B * B - 4 * C) * (C + sqrt(B * B + (1 - C) * (1 - C)) + 1);
+    float fenzi = 2 * (B * D * E - C * D * D - E * E + 4 * F * C - B * B * F);
+    float fenmu = (B * B - 4 * C) * (C - sqrt(B * B + (1 - C) * (1 - C)) + 1);
+    float femmu2 = (B * B - 4 * C) * (C + sqrt(B * B + (1 - C) * (1 - C)) + 1);
     a = sqrt(fabs(fenzi / fenmu));
     b = sqrt(fabs(fenzi / femmu2));
     
@@ -261,8 +260,8 @@ void EllipseFit::compute() {
     }
     cout<<"compute:"<< "xc:" <<xc<<"yc:" <<yc<<"a:" <<a <<"b:"<< b<< "angle:"<<angle;
     
-    double e = 0;
-    double temp;
+    float e = 0;
+    float temp;
     for (int i = 0; i < inputList.size(); ++i) {
         x = inputList[i].x;
         y = inputList[i].y;
@@ -271,13 +270,23 @@ void EllipseFit::compute() {
     }
     errorValue = e / inputList.size();
     cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
-    
     // 判断是否是椭圆，有可能是双曲线
     if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
+        
         cout<<"compute:"<<"is a Ellipse";
     } else {
         cout<<"compute:"<<"is not a Ellipse";
-        errorValue = 10E10;
+        errorValue = 10E20;
+    }
+    
+}
+bool EllipseFit::checkEllipse(){
+    if(errorValue<maxEllipseError)
+    {
+        return true;
+    }
+    else {
+        return false;
     }
 }
 void EllipseFit::clear() {

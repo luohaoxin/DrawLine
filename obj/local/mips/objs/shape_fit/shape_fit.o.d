@@ -290,10 +290,6 @@ obj/local/mips/objs/shape_fit/shape_fit.o: jni/shape_fit.cpp \
  jni/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
  jni/Eigen/src/Eigenvalues/./RealQZ.h \
  jni/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
- /Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/list \
- /Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_list.h \
- /Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_list.c \
- /Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_carray.h \
  /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/android/log.h
 
 /Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/string.h:
@@ -973,13 +969,5 @@ jni/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h:
 jni/Eigen/src/Eigenvalues/./RealQZ.h:
 
 jni/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h:
-
-/Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/list:
-
-/Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_list.h:
-
-/Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_list.c:
-
-/Users/luohaoxin/Documents/poi/android-ndk-r10e/sources/cxx-stl/stlport/stlport/stl/_carray.h:
 
 /Users/luohaoxin/Documents/poi/android-ndk-r10e/platforms/android-21/arch-mips/usr/include/android/log.h:

@@ -9,7 +9,6 @@
 #define BESTFIT_H_
 #include "ShapeFit.h"
 #include <vector>
-#include <list>
 class BestFit {
 public:
 	BestFit();
