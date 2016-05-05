@@ -17,7 +17,7 @@ using namespace std;
 #define acceptDeltaAnlgeAbsSumValue 15
 #define leastLineLongLengthSquare 0.01f
 //Ellipse
-#define maxEllipseError 0.00005
+#define maxEllipseError 0.00007
 
 PointF::PointF(float x, float y) {
     this->x = x;
@@ -90,9 +90,9 @@ bool Line::inputPoint(float x, float y) {
             } else {
                 return false;
             }
-            
+
         }
-        
+
     }
 }
 bool Line::checkLine() {
@@ -175,7 +175,7 @@ void LineFit::compute() {
         startPoint.x=(first.y - b) / a;
         startPoint.y=first.y;
     }
-    
+
     deltaY = fabs(last.x * a + b - last.y);
     deltaX = fabs(last.x - (last.y - b) / a);
     if (deltaY < deltaX) {
@@ -240,7 +240,7 @@ void EllipseFit::compute() {
         BMatrix(2,0) += -xxx;
         BMatrix(3,0) += -xx * y;
         BMatrix(4,0) += -xx;
-        
+
     }
     Eigen::MatrixXf XMatrix = AMatrix.inverse()*BMatrix;
     cout<<"compute "<<"X:"<<XMatrix;
@@ -251,20 +251,20 @@ void EllipseFit::compute() {
     float F = XMatrix(4,0);
     xc = (B * E - 2 * C * D) / (4 * C - B * B);
     yc = (B * D - 2 * E) / (4 * C - B * B);
-    
+
     float fenzi = 2 * (B * D * E - C * D * D - E * E + 4 * F * C - B * B * F);
     float fenmu = (B * B - 4 * C) * (C - sqrt(B * B + (1 - C) * (1 - C)) + 1);
     float femmu2 = (B * B - 4 * C) * (C + sqrt(B * B + (1 - C) * (1 - C)) + 1);
     a = sqrt(fabs(fenzi / fenmu));
     b = sqrt(fabs(fenzi / femmu2));
-    
+
     // angle=Math.atan(B/(1-C))/2/Math.PI*180;
     angle = atan(sqrt((a * a - b * b * C) / (a * a * C - b * b)) + 0.0001) * 180 / M_PI;
     if (B > 0) {
         angle = 180 - angle;
     }
     cout<<"compute:"<< "xc:" <<xc<<"yc:" <<yc<<"a:" <<a <<"b:"<< b<< "angle:"<<angle;
-    
+
     float e = 0;
     float temp;
     for (int i = 0; i < inputList.size(); ++i) {
@@ -276,18 +276,19 @@ void EllipseFit::compute() {
     errorValue = e / inputList.size();
     cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
     LOGV("EllipseFit errorValue %f", errorValue);
+    LOGV("EllipseFit a*b %f", a*b);
     // 判断是否是椭圆，有可能是双曲线
     if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
-        
+
         cout<<"compute:"<<"is a Ellipse";
     } else {
         cout<<"compute:"<<"is not a Ellipse";
         errorValue = 10E20;
     }
-    
+
 }
 bool EllipseFit::checkEllipse(){
-    if(errorValue<maxEllipseError)
+    if(errorValue<(a*b>=0.2? 0.00015:maxEllipseError))
     {
         return true;
     }

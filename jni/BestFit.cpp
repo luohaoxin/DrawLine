@@ -17,7 +17,7 @@ using namespace std;
 #include <android/log.h>
 #define TAG "ShapeFit"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
-#define MAX_LINE_ANGLE_DIFFER 15
+#define MAX_LINE_ANGLE_DIFFER 25
 #define leastLineLongLengthSquare 0.1f
 BestFit::BestFit() {
 }
@@ -166,7 +166,7 @@ float * BestFit::getResult() {
         result[3]=lineFit.endPoint.x;
         result[4]=lineFit.endPoint.y;
     }else{
-        ellipseFit.compute();
+//        ellipseFit.compute();
         if(ellipseFit.checkEllipse())
         {
             result=new float[6];
