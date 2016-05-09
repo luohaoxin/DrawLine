@@ -8,17 +8,15 @@
 #include <iostream>
 #include<math.h>
 #include "Eigen/Dense"
-#include <android/log.h>
-#define TAG "ShapeFit"
-#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 using namespace std;
 //line
 #define acceptDeltaAngleSumValue 25
 #define acceptDeltaAnlgeAbsSumValue 15
-#define leastLineLongLengthSquare 0.01f
+#define leastLineLongLengthSquare 0.0005f
 //Ellipse
 #define maxEllipseError 0.00007
-
+#define maxEllipseErrorForBig 0.0001
+#define EllipseBigBorder 0.2
 PointF::PointF(float x, float y) {
     this->x = x;
     this->y = y;
@@ -90,9 +88,9 @@ bool Line::inputPoint(float x, float y) {
             } else {
                 return false;
             }
-
+            
         }
-
+        
     }
 }
 bool Line::checkLine() {
@@ -175,7 +173,7 @@ void LineFit::compute() {
         startPoint.x=(first.y - b) / a;
         startPoint.y=first.y;
     }
-
+    
     deltaY = fabs(last.x * a + b - last.y);
     deltaX = fabs(last.x - (last.y - b) / a);
     if (deltaY < deltaX) {
@@ -184,6 +182,20 @@ void LineFit::compute() {
     } else {
         endPoint.x=(last.y - b) / a;
         endPoint.y=last.y;    }
+}
+void LineFit::correct(){
+    float angle=atan(a)*180/M_PI;
+    PointF cPoint((startPoint.x+endPoint.x)/2,(startPoint.y+endPoint.y)/2);
+    if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
+    {
+        
+    }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
+        
+        
+    }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
+    {
+        
+    }
 }
 void LineFit::clear() {
     inputList.clear();
@@ -199,6 +211,7 @@ void EllipseFit::setInputPoint(vector<PointF> input){
     this->inputList=input;
 }
 void EllipseFit::compute() {
+    //x^2+Bxy+Cy^2+Dx+Ey+F=0
     float x, xx, xxx, xxxx;
     float y, yy, yyy, yyyy;
     for (int i = 0; i < inputList.size(); ++i) {
@@ -240,7 +253,7 @@ void EllipseFit::compute() {
         BMatrix(2,0) += -xxx;
         BMatrix(3,0) += -xx * y;
         BMatrix(4,0) += -xx;
-
+        
     }
     Eigen::MatrixXf XMatrix = AMatrix.inverse()*BMatrix;
     cout<<"compute "<<"X:"<<XMatrix;
@@ -251,20 +264,20 @@ void EllipseFit::compute() {
     float F = XMatrix(4,0);
     xc = (B * E - 2 * C * D) / (4 * C - B * B);
     yc = (B * D - 2 * E) / (4 * C - B * B);
-
+    
     float fenzi = 2 * (B * D * E - C * D * D - E * E + 4 * F * C - B * B * F);
     float fenmu = (B * B - 4 * C) * (C - sqrt(B * B + (1 - C) * (1 - C)) + 1);
     float femmu2 = (B * B - 4 * C) * (C + sqrt(B * B + (1 - C) * (1 - C)) + 1);
     a = sqrt(fabs(fenzi / fenmu));
     b = sqrt(fabs(fenzi / femmu2));
-
+    
     // angle=Math.atan(B/(1-C))/2/Math.PI*180;
     angle = atan(sqrt((a * a - b * b * C) / (a * a * C - b * b)) + 0.0001) * 180 / M_PI;
     if (B > 0) {
         angle = 180 - angle;
     }
     cout<<"compute:"<< "xc:" <<xc<<"yc:" <<yc<<"a:" <<a <<"b:"<< b<< "angle:"<<angle;
-
+    
     float e = 0;
     float temp;
     for (int i = 0; i < inputList.size(); ++i) {
@@ -275,20 +288,39 @@ void EllipseFit::compute() {
     }
     errorValue = e / inputList.size();
     cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
-    LOGV("EllipseFit errorValue %f", errorValue);
-    LOGV("EllipseFit a*b %f", a*b);
     // 判断是否是椭圆，有可能是双曲线
     if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
-
+        
         cout<<"compute:"<<"is a Ellipse";
     } else {
         cout<<"compute:"<<"is not a Ellipse";
         errorValue = 10E20;
     }
-
+    
+}
+void EllipseFit::correct(){
+    if(a/b<1.3)
+    {
+        a=(a+b)/2;
+        b=a;
+    }
+    if(abs(xc-0.5)<0.1)
+    {
+        xc=0.5;
+    }
+    if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
+    {
+        angle=90;
+    }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
+        angle=0;
+        
+    }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
+    {
+        angle=180;
+    }
 }
 bool EllipseFit::checkEllipse(){
-    if(errorValue<(a*b>=0.2? 0.00015:maxEllipseError))
+    if(errorValue<(a*b>EllipseBigBorder? maxEllipseErrorForBig:maxEllipseError))
     {
         return true;
     }

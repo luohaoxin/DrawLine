@@ -14,11 +14,10 @@
 #include "Eigen/Dense"
 using Eigen::MatrixXf;
 using namespace std;
-#include <android/log.h>
-#define TAG "ShapeFit"
-#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 #define MAX_LINE_ANGLE_DIFFER 25
 #define leastLineLongLengthSquare 0.1f
+#define maxLineFitListErrorValue 0.005
+#define maxShapeFitListErrorValue 0.0005
 BestFit::BestFit() {
 }
 BestFit::~BestFit()
@@ -46,6 +45,7 @@ void BestFit::inputPoint(float x, float y, bool isFinished) {
         }
     }
 }
+
 void BestFit::startPoint(float x, float y) {
     sPoint.x=x;
     sPoint.y=y;
@@ -63,6 +63,16 @@ float * BestFit::finishPoint(float x, float y) {
     fPoint.y=y;
     inputPoint(x, y, true);
     ellipseFit.inputPoint(x, y);
+    
+    float deltaX=sPoint.x-fPoint.x;
+    float deltaY=sPoint.y-fPoint.y;
+    if(deltaX*deltaX+deltaY*deltaY>leastLineLongLengthSquare)
+    {
+        isClosed=false;
+    }
+    else{
+        isClosed=true;
+    }
     return getResult();
 }
 bool BestFit::mergeSimilarLines() {
@@ -151,24 +161,67 @@ PointF BestFit::getCrossPoint(LineFit * oneLine,LineFit * twoLine)
     result.y=XMatrix(1,0);
     return result;
 }
+float BestFit::getLineFitListErrorValue(){
+    float errorSum=0;
+    float error=0;
+    float a,b;
+    float temp;
+    for (int i=0;i<ellipseFit.inputList.size();i++) {
+        PointF point=ellipseFit.inputList[i];
+        float x=point.x;
+        float y=point.y;
+        
+        
+        for (int j=0; j<lineFitList.size(); j++) {
+            a=lineFitList[j].a;
+            b=lineFitList[j].b;
+            if(j==0)
+            {
+                error=(a*x-y+b)*(a*x-y+b)/(a*a+1);
+            }
+            else{
+                temp=(a*x-y+b)*(a*x-y+b)/(a*a+1);
+                error=error<temp? error:temp;
+            }
+        }
+        errorSum+=error;
+        
+    }
+    return errorSum/ellipseFit.inputList.size();
+}
 float * BestFit::getResult() {
     float * result;
-    ellipseFit.compute();
-    LOGV("lineFitList size %d", lineFitList.size());
-    float deltaX=sPoint.x-fPoint.x;
-    float deltaY=sPoint.y-fPoint.y;
-    if (lineFitList.size() == 1&&deltaX*deltaX+deltaY*deltaY>leastLineLongLengthSquare) {
-        LineFit lineFit=lineFitList[0];
-        result=new float[5];
-        result[0]=1;
-        result[1]=lineFit.startPoint.x;
-        result[2]=lineFit.startPoint.y;
-        result[3]=lineFit.endPoint.x;
-        result[4]=lineFit.endPoint.y;
-    }else{
-//        ellipseFit.compute();
+    if(!isClosed)
+    {
+        //maybe a line
+        if (lineFitList.size() == 1&&getLineFitListErrorValue()<maxLineFitListErrorValue) {
+            LineFit lineFit(ellipseFit.inputList);
+            lineFit.compute();
+            result=new float[5];
+            result[0]=1;
+            result[1]=lineFit.startPoint.x;
+            result[2]=lineFit.startPoint.y;
+            result[3]=lineFit.endPoint.x;
+            result[4]=lineFit.endPoint.y;
+        }
+        else{
+            result=new float[0];
+            result[0]=0;
+            cout<<"not fit";
+            
+        }
+    }
+    else{
+        if(lineFitList.size() == 4&&getLineFitListErrorValue()<maxShapeFitListErrorValue)
+        {
+            result=getRectangle();
+            cout<<"rectangle";
+            return result;
+        }
+        ellipseFit.compute();
         if(ellipseFit.checkEllipse())
         {
+            ellipseFit.correct();
             result=new float[6];
             result[0]=2;
             result[1]=ellipseFit.xc;
@@ -179,22 +232,19 @@ float * BestFit::getResult() {
             cout<<"ellipse";
         }
         else{
-            if(lineFitList.size() == 3)
+            if(lineFitList.size() == 3&&getLineFitListErrorValue()<maxShapeFitListErrorValue)
             {
                 result=getTriangle();
                 cout<<"triangle";
             }
-            else if(lineFitList.size() == 4)
-            {
-                result=getRectangle();
-                cout<<"rectangle";
-            }
+            
             else{
                 result=new float[0];
                 result[0]=0;
                 cout<<"not fit";
             }
         }
+        
         
     }
     return result;
@@ -205,15 +255,15 @@ void BestFit::reset(){
 }
 int main(int argc, char *argv[]) {
     
-//    BestFit fit;
-    //    fit.startPoint(50, 100);
-    //    fit.updatePoint(25, 75);
-    //    fit.updatePoint(0, 50);
-    //    fit.updatePoint(25, 25);
-    //    fit.updatePoint(50, 0);
-    //    fit.updatePoint(75, 25);
-    //    fit.updatePoint(100, 50);
-    //    float * result= fit.finishPoint(75, 75);
+    BestFit fit;
+    fit.startPoint(50, 100);
+    fit.updatePoint(25, 75);
+    fit.updatePoint(0, 50);
+    fit.updatePoint(25, 25);
+    fit.updatePoint(50, 0);
+    fit.updatePoint(75, 25);
+    fit.updatePoint(100, 50);
+    float * result= fit.finishPoint(75, 75);
     
     //    fit.startPoint(1, 1);
     //    fit.updatePoint(3, 3);
@@ -245,7 +295,7 @@ int main(int argc, char *argv[]) {
     p1.x=200;
     luo=mergedPoints;
     luo[0].x=200;
-//    delete p1;
+    //    delete p1;
     cout << mergedPoints[0].x;
 }
 

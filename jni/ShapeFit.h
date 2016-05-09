@@ -39,6 +39,7 @@ public:
 	ShapeFit();
 	void inputPoint(float x, float y);
     void compute(){};
+    void correct(){};
     void clear(){};
 	~ShapeFit();
 };
@@ -48,6 +49,7 @@ public:
     PointF startPoint;
     PointF endPoint;
 	void compute();
+    void correct();
 	void clear();
 	LineFit();
 	LineFit(const LineFit & c);
@@ -62,6 +64,7 @@ public:
     EllipseFit();
     void setInputPoint(vector<PointF> input);
 	void compute();
+    void correct();
     bool checkEllipse();
 	void clear();
 	~EllipseFit();

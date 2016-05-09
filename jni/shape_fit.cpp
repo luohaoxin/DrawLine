@@ -17,7 +17,6 @@
 #include <string.h>
 #include <jni.h>
 #include"BestFit.h"
-// for __android_log_print(ANDROID_LOG_INFO, "YourApp", "formatted message");
 #include <android/log.h>
 #define TAG "ShapeFit"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
