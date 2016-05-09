@@ -132,7 +132,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 		Log.i("luohaoxin", "onTouchEvent:" + event.getActionMasked() + " " + event.getPointerCount());
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			bestShapeFit.startPoint(x, y);
+			bestShapeFit.startPoint(x / width, y / width);
 			path.moveTo(x, y);
 			// shapeFit = new EllipseFit();
 			// shapeFit.inputPoint(x, y);
@@ -142,7 +142,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
-			bestShapeFit.updatePoint(x, y);
+			bestShapeFit.updatePoint(x / width, y / width);
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
 			// shapeFit.inputPoint(x, y);
 			// preAnalyzeFit.inputPoint(x, y, false);
@@ -151,7 +151,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_UP:
-			float[] line = bestShapeFit.finishPoint(x, y);
+			float[] line = bestShapeFit.finishPoint(x / width, y / width);
 			String text = "show";
 			for (int i = 0; i < line.length; i++) {
 				text = text + " " + line[i] + " ";
@@ -195,7 +195,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			resultDrawable = new Drawable() {
 				@Override
 				public void draw(Canvas canvas, Paint paint) {
-					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
+					canvas.drawLine(result[1] * width, result[2] * width, result[3] * width, result[4] * width, paint);
 
 				}
 			};
@@ -204,10 +204,10 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			resultDrawable = new Drawable() {
 				@Override
 				public void draw(Canvas canvas, Paint paint) {
-					float xc = result[1];
-					float yc = result[2];
-					float a = result[3];
-					float b = result[4];
+					float xc = result[1] * width;
+					float yc = result[2] * width;
+					float a = result[3] * width;
+					float b = result[4] * width;
 					float angle = result[5];
 					canvas.save();
 					canvas.rotate(angle, xc, yc);
@@ -221,9 +221,9 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			resultDrawable = new Drawable() {
 				@Override
 				public void draw(Canvas canvas, Paint paint) {
-					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
-					canvas.drawLine(result[3], result[4], result[5], result[6], paint);
-					canvas.drawLine(result[5], result[6], result[1], result[2], paint);
+					canvas.drawLine(result[1] * width, result[2] * width, result[3] * width, result[4] * width, paint);
+					canvas.drawLine(result[3] * width, result[4] * width, result[5] * width, result[6] * width, paint);
+					canvas.drawLine(result[5] * width, result[6] * width, result[1] * width, result[2] * width, paint);
 				}
 			};
 			break;
@@ -231,10 +231,10 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			resultDrawable = new Drawable() {
 				@Override
 				public void draw(Canvas canvas, Paint paint) {
-					canvas.drawLine(result[1], result[2], result[3], result[4], paint);
-					canvas.drawLine(result[3], result[4], result[5], result[6], paint);
-					canvas.drawLine(result[5], result[6], result[7], result[8], paint);
-					canvas.drawLine(result[7], result[8], result[1], result[2], paint);
+					canvas.drawLine(result[1] * width, result[2] * width, result[3] * width, result[4] * width, paint);
+					canvas.drawLine(result[3] * width, result[4] * width, result[5] * width, result[6] * width, paint);
+					canvas.drawLine(result[5] * width, result[6] * width, result[7] * width, result[8] * width, paint);
+					canvas.drawLine(result[7] * width, result[8] * width, result[1] * width, result[2] * width, paint);
 				}
 			};
 			break;
