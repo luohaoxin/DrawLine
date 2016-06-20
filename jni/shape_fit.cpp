@@ -36,7 +36,8 @@ float * data;
  */
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-//	LOGV("startPoint");
+	LOGV("best fit begin");
+	LOGV("startPoint(%f,%f)", x,y);
 	bestfit.startPoint(x, y);
 //	LOGV("startPoint");
 }
@@ -48,9 +49,8 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-//	LOGV("updatePoint1");
+	LOGV("updatePoint(%f,%f)", x,y);
 	bestfit.updatePoint(x, y);
-//	LOGV("updatePoint2");
 }
 
 /*
@@ -60,12 +60,12 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 jfloatArray Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-//	LOGV("finishPoint1");
+	LOGV("finishPoint(%f,%f)", x,y);
 	data = bestfit.finishPoint(x, y);
-//	LOGV("finishPoint2");
 
 	jfloatArray result;
 	int type = (int) (data[0]);
+	LOGV("shape fit finish:%d",type );
 	int size = 1;
 	switch (type) {
 	case 1:
@@ -93,11 +93,8 @@ jfloatArray Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		size = 1;
 		break;
 	}
-//	LOGV("result size %d", size);
 	env->SetFloatArrayRegion(result, 0, size, data);
-//	LOGV("end");
 	delete []data;
-//	LOGV("end2");
 	return result;
 }
 #ifdef __cplusplus

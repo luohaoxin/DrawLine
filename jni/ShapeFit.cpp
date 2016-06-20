@@ -204,16 +204,26 @@ EllipseFit::EllipseFit(){
 void EllipseFit::setInputPoint(vector<PointF> input){
     this->inputList=input;
 }
+void EllipseFit::updateMinXY(float x,float y,bool isFirst){
+    if(isFirst){
+        minX=x;
+        minY=y;
+    }else{
+        minX=minX<x? minX:x;
+        minY=minY<y? minY:y;
+    }
+}
 void EllipseFit::compute() {
     //x^2+Bxy+Cy^2+Dx+Ey+F=0
     float x, xx, xxx, xxxx;
     float y, yy, yyy, yyyy;
     for (int i = 0; i < inputList.size(); ++i) {
-        x = inputList[i].x;
+        
+        x = inputList[i].x-minX;
         xx = x * x;
         xxx = xx * x;
         xxxx = xxx * x;
-        y = inputList[i].y;
+        y = inputList[i].y-minY;
         yy = y * y;
         yyy = yy * y;
         yyyy = yyy * y;
@@ -256,8 +266,8 @@ void EllipseFit::compute() {
     float D = XMatrix(2,0);
     float E = XMatrix(3,0);
     float F = XMatrix(4,0);
-    xc = (B * E - 2 * C * D) / (4 * C - B * B);
-    yc = (B * D - 2 * E) / (4 * C - B * B);
+    xc = (B * E - 2 * C * D) / (4 * C - B * B)+minX;
+    yc = (B * D - 2 * E) / (4 * C - B * B)+minY;
     
     float fenzi = 2 * (B * D * E - C * D * D - E * E + 4 * F * C - B * B * F);
     float fenmu = (B * B - 4 * C) * (C - sqrt(B * B + (1 - C) * (1 - C)) + 1);
@@ -275,8 +285,8 @@ void EllipseFit::compute() {
     float e = 0;
     float temp;
     for (int i = 0; i < inputList.size(); ++i) {
-        x = inputList[i].x;
-        y = inputList[i].y;
+        x = inputList[i].x-minX;
+        y = inputList[i].y-minY;
         temp = x * x + B * x * y + C * y * y + D * x + E * y + F;
         e += (temp * temp);
     }
@@ -316,6 +326,7 @@ bool EllipseFit::checkEllipse(){
 void EllipseFit::clear() {
     AMatrix=AMatrix*0;
     BMatrix=BMatrix*0;
+    errorValue=0;
     inputList.clear();
 }
 EllipseFit::~EllipseFit() {
