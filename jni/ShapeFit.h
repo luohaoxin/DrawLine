@@ -69,5 +69,5 @@ public:
 	void clear();
 	~EllipseFit();
 };
-
+float getCorrectAngle(float angle);
 #endif /* SHAPEFIT_H_ */

@@ -113,6 +113,9 @@ bool Line::checkLine() {
 }
 void Line::reset() {
     inputList.clear();
+    lastAngle=0;
+    deltaAngleSum=0;
+    deltaAngleAbsSum=0;
 }
 ShapeFit::ShapeFit() {
     errorValue = 0;
@@ -186,16 +189,7 @@ void LineFit::compute() {
 void LineFit::correct(){
     float angle=atan(a)*180/M_PI;
     PointF cPoint((startPoint.x+endPoint.x)/2,(startPoint.y+endPoint.y)/2);
-    if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
-    {
-        
-    }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
-        
-        
-    }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
-    {
-        
-    }
+    angle=getCorrectAngle(angle);
 }
 void LineFit::clear() {
     inputList.clear();
@@ -308,16 +302,7 @@ void EllipseFit::correct(){
     {
         xc=0.5;
     }
-    if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
-    {
-        angle=90;
-    }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
-        angle=0;
-        
-    }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
-    {
-        angle=180;
-    }
+    angle=getCorrectAngle(angle);
 }
 bool EllipseFit::checkEllipse(){
     if(errorValue<(a*b>EllipseBigBorder? maxEllipseErrorForBig:maxEllipseError))
@@ -335,4 +320,17 @@ void EllipseFit::clear() {
 }
 EllipseFit::~EllipseFit() {
 cout<<"EllipseFit::~EllipseFit()"<<endl;
+}
+float getCorrectAngle(float angle){
+    if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
+    {
+        return 90;
+    }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
+        return 90;
+        
+    }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
+    {
+        return 180;
+    }
+    return angle;
 }

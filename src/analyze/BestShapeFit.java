@@ -2,11 +2,11 @@ package analyze;
 
 public class BestShapeFit {
 
-	public native void startPoint(float x, float y);
+	public static native void startPoint(float x, float y);
 
-	public native void updatePoint(float x, float y);
+	public static native void updatePoint(float x, float y);
 
-	public native float[] finishPoint(float x, float y);
+	public static native float[] finishPoint(float x, float y);
 
 	/*
 	 * this is used to load the 'hello-jni' library on application startup. The

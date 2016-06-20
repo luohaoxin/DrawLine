@@ -44,7 +44,6 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 	Paint paint = new Paint(); // 创建画笔
 	ShapeFit shapeFit;
 	PreAnalyzeFit preAnalyzeFit;
-	BestShapeFit bestShapeFit = new BestShapeFit();
 	Context context;
 
 	public MyView(Context context) {
@@ -132,7 +131,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 		Log.i("luohaoxin", "onTouchEvent:" + event.getActionMasked() + " " + event.getPointerCount());
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			bestShapeFit.startPoint(x / width, y / width);
+			BestShapeFit.startPoint(x / width, y / width);
 			path.moveTo(x, y);
 			// shapeFit = new EllipseFit();
 			// shapeFit.inputPoint(x, y);
@@ -142,7 +141,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
-			bestShapeFit.updatePoint(x / width, y / width);
+			BestShapeFit.updatePoint(x / width, y / width);
 			path.quadTo((preX + x) / 2, (preY + y) / 2, x, y);
 			// shapeFit.inputPoint(x, y);
 			// preAnalyzeFit.inputPoint(x, y, false);
@@ -151,7 +150,7 @@ public class MyView extends SurfaceView implements SurfaceHolder.Callback {
 			preY = y;
 			break;
 		case MotionEvent.ACTION_UP:
-			float[] line = bestShapeFit.finishPoint(x / width, y / width);
+			float[] line = BestShapeFit.finishPoint(x / width, y / width);
 			String text = "show";
 			for (int i = 0; i < line.length; i++) {
 				text = text + " " + line[i] + " ";

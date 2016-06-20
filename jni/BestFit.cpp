@@ -51,7 +51,6 @@ void BestFit::startPoint(float x, float y) {
     sPoint.y=y;
     reset();
     inputPoint(x, y, false);
-    ellipseFit.clear();
     ellipseFit.inputPoint(x, y);
 }
 void BestFit::updatePoint(float x, float y) {
@@ -205,7 +204,7 @@ float * BestFit::getResult() {
             result[4]=lineFit.endPoint.y;
         }
         else{
-            result=new float[0];
+            result=new float[1];
             result[0]=0;
             cout<<"not fit";
             
@@ -239,7 +238,7 @@ float * BestFit::getResult() {
             }
             
             else{
-                result=new float[0];
+                result=new float[1];
                 result[0]=0;
                 cout<<"not fit";
             }
@@ -252,19 +251,46 @@ float * BestFit::getResult() {
 void BestFit::reset(){
     lineFitList.clear();
     lineList.clear();
+    ellipseFit.clear();
 }
 int main(int argc, char *argv[]) {
     
     BestFit fit;
-    fit.startPoint(50, 100);
-    fit.updatePoint(25, 75);
-    fit.updatePoint(0, 50);
-    fit.updatePoint(25, 25);
-    fit.updatePoint(50, 0);
-    fit.updatePoint(75, 25);
-    fit.updatePoint(100, 50);
-    float * result= fit.finishPoint(75, 75);
+    fit.startPoint(0.1,0.1);
+    fit.updatePoint(0.2,0.2);
+    fit.updatePoint(0.21,0.22);
+    fit.updatePoint(0.314,0.32);
+    fit.updatePoint(0.41,0.424);
+    fit.updatePoint(0.514,0.52);
+    fit.updatePoint(0.55, 0.554);
+    float * result= fit.finishPoint(0.554, 0.454);
     
+    fit.startPoint(0.1,0.1);
+    fit.updatePoint(0.2,0.2);
+    fit.updatePoint(0.21,0.22);
+    fit.updatePoint(0.314,0.32);
+    fit.updatePoint(0.41,0.424);
+    fit.updatePoint(0.514,0.52);
+    fit.updatePoint(0.55, 0.554);
+    result= fit.finishPoint(0.554, 0.454);
+    
+    fit.startPoint(0.1,0.1);
+    fit.updatePoint(0.2,0.2);
+    fit.updatePoint(0.21,0.22);
+    fit.updatePoint(0.314,0.32);
+    fit.updatePoint(0.41,0.424);
+    fit.updatePoint(0.514,0.52);
+    fit.updatePoint(0.55, 0.554);
+    result= fit.finishPoint(0.554, 0.454);
+    
+    fit.startPoint(0.1,0.1);
+    fit.updatePoint(0.2,0.2);
+    fit.updatePoint(0.21,0.22);
+    fit.updatePoint(0.314,0.32);
+    fit.updatePoint(0.41,0.424);
+    fit.updatePoint(0.514,0.52);
+    fit.updatePoint(0.55, 0.554);
+    result= fit.finishPoint(0.554, 0.454);
     //    fit.startPoint(1, 1);
     //    fit.updatePoint(3, 3);
     //    fit.updatePoint(10, 10);
@@ -288,14 +314,15 @@ int main(int argc, char *argv[]) {
     //    m2=m*m2;
     //    std::cout << m2<< endl;
     //    m.inverse();
-    vector<PointF> luo;
-    vector<PointF> mergedPoints;
-    PointF p1(100, 100);
-    mergedPoints.push_back(p1);
-    p1.x=200;
-    luo=mergedPoints;
-    luo[0].x=200;
-    //    delete p1;
-    cout << mergedPoints[0].x;
+//    vector<PointF> luo;
+//    vector<PointF> mergedPoints;
+//    PointF p1(100, 100);
+//    mergedPoints.push_back(p1);
+//    p1.x=200;
+//    luo=mergedPoints;
+//    luo[0].x=200;
+    int * aa;
+    aa=new int(2);
+    cout << *aa;
 }
 
