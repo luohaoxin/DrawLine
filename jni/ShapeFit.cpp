@@ -308,10 +308,6 @@ void EllipseFit::correct(){
         a=(a+b)/2;
         b=a;
     }
-    if(abs(xc-0.5)<0.1)
-    {
-        xc=0.5;
-    }
     angle=getCorrectAngle(angle);
 }
 bool EllipseFit::checkEllipse(){
@@ -337,7 +333,7 @@ float getCorrectAngle(float angle){
     {
         return 90;
     }else if(abs(angle-0)<acceptDeltaAnlgeAbsSumValue){
-        return 90;
+        return 0;
         
     }else if(abs(angle-180)<acceptDeltaAnlgeAbsSumValue)
     {

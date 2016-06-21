@@ -37,7 +37,7 @@ float * data;
 void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
 	LOGV("best fit begin");
-	LOGV("startPoint(%f,%f)", x,y);
+	LOGV("startPoint(%f,%f);", x,y);
 	bestfit.startPoint(x, y);
 //	LOGV("startPoint");
 }
@@ -49,7 +49,7 @@ void Java_analyze_BestShapeFit_startPoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
 		jfloat y) {
-	LOGV("updatePoint(%f,%f)", x,y);
+	LOGV("updatePoint(%f,%f);", x,y);
 	bestfit.updatePoint(x, y);
 }
 
@@ -60,7 +60,7 @@ void Java_analyze_BestShapeFit_updatePoint(JNIEnv *env, jobject thiz, jfloat x,
  */
 jfloatArray Java_analyze_BestShapeFit_finishPoint(JNIEnv *env, jobject thiz,
 		jfloat x, jfloat y) {
-	LOGV("finishPoint(%f,%f)", x,y);
+	LOGV("finishPoint(%f,%f);", x,y);
 	data = bestfit.finishPoint(x, y);
 
 	jfloatArray result;
