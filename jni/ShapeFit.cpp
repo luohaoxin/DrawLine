@@ -283,17 +283,20 @@ void EllipseFit::compute() {
     cout<<"compute:"<< "xc:" <<xc<<"yc:" <<yc<<"a:" <<a <<"b:"<< b<< "angle:"<<angle;
     
     float e = 0;
-    float temp;
+    float eY=0;
+    float temp,tempY;
     for (int i = 0; i < inputList.size(); ++i) {
         x = inputList[i].x-minX;
         y = inputList[i].y-minY;
         temp = x * x + B * x * y + C * y * y + D * x + E * y + F;
+        tempY=temp/C;
         e += (temp * temp);
+        eY+=(tempY*tempY);
     }
-    errorValue = e / inputList.size();
+    errorValue = (e<eY? e:eY) / inputList.size();
     cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
     // 判断是否是椭圆，有可能是双曲线
-    if (B * B - 4 * C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
+    if (B * B - 4*C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
         
         cout<<"compute:"<<"is a Ellipse";
     } else {
