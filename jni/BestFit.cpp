@@ -19,7 +19,7 @@ using Eigen::MatrixXf;
 using namespace std;
 #define MAX_LINE_ANGLE_DIFFER 25
 #define leastLineLongLengthSquare 0.1f
-#define maxLineFitListErrorValue 0.005
+#define maxLineFitListErrorValue 0.0005
 #define maxShapeFitListErrorValue 0.0005
 BestFit::BestFit() {
 }
