@@ -46,9 +46,12 @@ public:
 class LineFit: public ShapeFit {
 public:
 	float a, b;
+    bool isVerticalY=false;
     PointF startPoint;
     PointF endPoint;
 	void compute();
+    void setTwoPoint();
+    void setTwoPointWhenVerticalY();
     void correct();
 	void clear();
 	LineFit();
@@ -72,4 +75,5 @@ public:
 	~EllipseFit();
 };
 float getCorrectAngle(float angle);
+void correctTwoPoints(PointF * pointOne,PointF * pointTwo);
 #endif /* SHAPEFIT_H_ */

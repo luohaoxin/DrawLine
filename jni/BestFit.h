@@ -19,6 +19,7 @@ public:
 	vector<LineFit> lineFitList;
     EllipseFit ellipseFit;
     bool isClosed;
+    float * getLine();
     float * getTriangle();
     float * getRectangle();
     PointF getCrossPoint(LineFit * oneLine,LineFit * twoLine);
@@ -27,6 +28,7 @@ public:
 	float * finishPoint(float x, float y);
 	void inputPoint(float x, float y, bool isFinished);
     float getLineFitListErrorValue();
+    
 	float * getResult();
     void reset();
     ~BestFit();

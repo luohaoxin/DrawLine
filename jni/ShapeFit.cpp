@@ -94,7 +94,7 @@ bool Line::inputPoint(float x, float y) {
     }
 }
 bool Line::checkLine() {
-//    cout<<"run checkline";
+    //    cout<<"run checkline";
     if (inputList.size() > 2) {
         PointF first = inputList[0];
         PointF last = inputList[inputList.size() - 1];
@@ -163,6 +163,8 @@ void LineFit::compute() {
     }
     errorValue=e / inputList.size();
     cout<<"a:" <<a <<"b:" <<b<< "  e:"<<(e / inputList.size())<<" n:"<<inputList.size()<<endl;
+}
+void LineFit::setTwoPoint(){
     PointF first = inputList[0];
     PointF last = inputList[inputList.size() - 1];
     float deltaY;
@@ -186,10 +188,31 @@ void LineFit::compute() {
         endPoint.x=(last.y - b) / a;
         endPoint.y=last.y;    }
 }
+void LineFit::setTwoPointWhenVerticalY(){
+    PointF first = inputList[0];
+    PointF last = inputList[inputList.size() - 1];
+    startPoint.x=-b/a;
+    startPoint.y=first.y;
+    
+    endPoint.x=-b/a;
+    endPoint.y=last.y;
+    
+    
+}
 void LineFit::correct(){
-    float angle=atan(a)*180/M_PI;
-    PointF cPoint((startPoint.x+endPoint.x)/2,(startPoint.y+endPoint.y)/2);
-    angle=getCorrectAngle(angle);
+    correctTwoPoints(&startPoint, &endPoint);
+//    float angle=atan(a)*180/M_PI;
+//    angle=getCorrectAngle(angle);
+//    if (angle==90||angle==-90) {
+//        isVerticalY=true;
+//        startPoint.x=(startPoint.x+endPoint.x)/2;
+//        endPoint.x=startPoint.x;
+//    }else if(angle==0||angle==180){
+//        startPoint.y=(startPoint.y+endPoint.y)/2;
+//        endPoint.y=startPoint.y;
+//        isVerticalY=false;
+//        
+//    }
 }
 void LineFit::clear() {
     inputList.clear();
@@ -282,19 +305,19 @@ void EllipseFit::compute() {
     }
     cout<<"compute:"<< "xc:" <<xc<<"yc:" <<yc<<"a:" <<a <<"b:"<< b<< "angle:"<<angle;
     
-    float e = 0;
-    float eY=0;
-    float temp,tempY;
+    float eX = 0;//this error value is based on x coordinate
+    float eY=0;//this error value is based on y coordinate
+    float tempX,tempY;
     for (int i = 0; i < inputList.size(); ++i) {
         x = inputList[i].x-minX;
         y = inputList[i].y-minY;
-        temp = x * x + B * x * y + C * y * y + D * x + E * y + F;
-        tempY=temp/C;
-        e += (temp * temp);
+        tempX = x * x + B * x * y + C * y * y + D * x + E * y + F;
+        tempY=tempX/C;
+        eX += (tempX * tempX);
         eY+=(tempY*tempY);
     }
-    errorValue = (e<eY? e:eY) / inputList.size();
-    cout<<"compute:"<<"e/n:" <<(e / inputList.size())<<"n:"<<inputList.size();
+    errorValue = (eX<eY? eX:eY) / inputList.size();
+    cout<<"compute:"<<"e/n:" <<errorValue<<"n:"<<inputList.size();
     // 判断是否是椭圆，有可能是双曲线
     if (B * B - 4*C < 0 && (D * D / 4 + E * E / 4 / C - F > 0)) {
         
@@ -329,9 +352,13 @@ void EllipseFit::clear() {
     inputList.clear();
 }
 EllipseFit::~EllipseFit() {
-cout<<"EllipseFit::~EllipseFit()"<<endl;
+    cout<<"EllipseFit::~EllipseFit()"<<endl;
 }
 float getCorrectAngle(float angle){
+    if(abs(angle+90)<acceptDeltaAnlgeAbsSumValue)
+    {
+        return -90;
+    }
     if(abs(angle-90)<acceptDeltaAnlgeAbsSumValue)
     {
         return 90;
@@ -343,4 +370,18 @@ float getCorrectAngle(float angle){
         return 180;
     }
     return angle;
+}
+void correctTwoPoints(PointF * pointOne,PointF * pointTwo){
+    float angle=atan((pointTwo->y-pointOne->y)/(pointTwo->x-pointOne->x))*180/M_PI;
+    angle=getCorrectAngle(angle);
+    if (angle==90||angle==-90) {
+        
+        pointOne->x=(pointOne->x+pointTwo->x)/2;
+        pointTwo->x=pointOne->x;
+    }else if(angle==0||angle==180){
+        pointOne->y=(pointOne->y+pointTwo->y)/2;
+        pointTwo->y=pointOne->y;
+        
+        
+    }
 }
