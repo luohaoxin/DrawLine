@@ -371,17 +371,18 @@ float getCorrectAngle(float angle){
     }
     return angle;
 }
-void correctTwoPoints(PointF * pointOne,PointF * pointTwo){
+bool correctTwoPoints(PointF * pointOne,PointF * pointTwo){
+    bool result=false;
     float angle=atan((pointTwo->y-pointOne->y)/(pointTwo->x-pointOne->x))*180/M_PI;
     angle=getCorrectAngle(angle);
     if (angle==90||angle==-90) {
-        
+        result=true;
         pointOne->x=(pointOne->x+pointTwo->x)/2;
         pointTwo->x=pointOne->x;
     }else if(angle==0||angle==180){
+        result=true;
         pointOne->y=(pointOne->y+pointTwo->y)/2;
         pointTwo->y=pointOne->y;
-        
-        
     }
+    return result;
 }

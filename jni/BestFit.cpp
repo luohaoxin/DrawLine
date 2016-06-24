@@ -132,6 +132,9 @@ float * BestFit::getTriangle()
     PointF onePoint=getCrossPoint(&lineFitList[0], &lineFitList[1]);
     PointF twoPoint=getCrossPoint(&lineFitList[1], &lineFitList[2]);
     PointF threePoint=getCrossPoint(&lineFitList[2], &lineFitList[0]);
+    correctTwoPoints(&onePoint, &twoPoint);
+    correctTwoPoints(&twoPoint, &threePoint);
+    correctTwoPoints(&threePoint, &onePoint);
     result[0]=3;
     result[1]=onePoint.x;
     result[2]=onePoint.y;
@@ -148,6 +151,37 @@ float * BestFit::getRectangle()
     PointF twoPoint=getCrossPoint(&lineFitList[1], &lineFitList[2]);
     PointF threePoint=getCrossPoint(&lineFitList[2], &lineFitList[3]);
     PointF fourPoint=getCrossPoint(&lineFitList[3], &lineFitList[0]);
+    bool hasCorrect1=correctTwoPoints(&onePoint, &twoPoint);
+    bool hasCorrect2=correctTwoPoints(&twoPoint, &threePoint);
+    bool hasCorrect3=correctTwoPoints(&threePoint, &fourPoint);
+    bool hasCorrect4=correctTwoPoints(&fourPoint, &onePoint);
+    if(hasCorrect1&&hasCorrect2&&hasCorrect3&&hasCorrect4){
+        float distance1=(twoPoint.y-onePoint.y)*(twoPoint.y-onePoint.y)+(twoPoint.x-onePoint.x)*(twoPoint.x-onePoint.x);
+        distance1=sqrt(distance1);
+        float distance2=(threePoint.y-twoPoint.y)*(threePoint.y-twoPoint.y)+(threePoint.x-twoPoint.x)*(threePoint.x-twoPoint.x);
+        distance2=sqrt(distance2);
+        float rate;
+        float targetDistance=(distance1+distance2)/2;
+        if(distance1>=distance2){
+            rate=distance1/distance2;
+        }else{
+            rate=distance2/distance1;
+        }
+        if(rate<1.3){
+            if(onePoint.x==twoPoint.x){
+                onePoint.y=(onePoint.y-twoPoint.y)*targetDistance/distance1+twoPoint.y;
+                fourPoint.y=onePoint.y;
+                threePoint.x=(threePoint.x-twoPoint.x)*targetDistance/distance2+twoPoint.x;
+                fourPoint.x=threePoint.x;
+            }else{
+                onePoint.x=(onePoint.x-twoPoint.x)*targetDistance/distance1+twoPoint.x;
+                fourPoint.x=onePoint.x;
+                threePoint.y=(threePoint.y-twoPoint.y)*targetDistance/distance2+twoPoint.y;
+                fourPoint.y=threePoint.y;
+            }
+        }
+    }
+    
     result[0]=4;
     result[1]=onePoint.x;
     result[2]=onePoint.y;
@@ -328,43 +362,43 @@ void BestFit::reset(){
     ellipseFit.minY=0;
 }
 int main(int argc, char *argv[]) {
-    BestFit fit;
-    float * result;
-    fit.startPoint(0.813889,0.786111);
-    fit.updatePoint(0.811111,0.782407);
-    fit.updatePoint(0.800000,0.770370);
-    fit.updatePoint(0.772222,0.747222);
-    fit.updatePoint(0.722222,0.719444);
-    fit.updatePoint(0.650926,0.693519);;
-    fit.updatePoint(0.568519,0.673148);
-    fit.updatePoint(0.486111,0.661111);
-    fit.updatePoint(0.406481,0.656482);
-    fit.updatePoint(0.333333,0.659259);
-    fit.updatePoint(0.266667,0.670370);
-    fit.updatePoint(0.212037,0.688889);
-    fit.updatePoint(0.172222,0.710185);
-    fit.updatePoint(0.140741,0.746296);
-    fit.updatePoint(0.127778,0.785185);
-    fit.updatePoint(0.133333,0.822222);
-    fit.updatePoint(0.154630,0.864815);
-    fit.updatePoint(0.191667,0.898148);
-    fit.updatePoint(0.253704,0.938889);
-    fit.updatePoint(0.326852,0.966667);
-    fit.updatePoint(0.405556,0.985185);
-    fit.updatePoint(0.483333,0.987037);
-    fit.updatePoint(0.563889,0.987037);
-    fit.updatePoint(0.646296,0.975000);
-    fit.updatePoint(0.717593,0.954630);
-    fit.updatePoint(0.762963,0.937037);
-    fit.updatePoint(0.799074,0.915741);
-    fit.updatePoint(0.819444,0.893519);
-    fit.updatePoint(0.833333,0.873148);
-    fit.updatePoint(0.839815,0.789815);
-    fit.updatePoint(0.836111,0.782407);
-    result=fit.finishPoint(0.836111,0.782407);
-    
-    cout<<"yuyuyuyuyuyuyuyuyuyuyuyuyuyu"<<result[0]<<endl;
-    delete [] result;
+//    BestFit fit;
+//    float * result;
+//    fit.startPoint(0.813889,0.786111);
+//    fit.updatePoint(0.811111,0.782407);
+//    fit.updatePoint(0.800000,0.770370);
+//    fit.updatePoint(0.772222,0.747222);
+//    fit.updatePoint(0.722222,0.719444);
+//    fit.updatePoint(0.650926,0.693519);;
+//    fit.updatePoint(0.568519,0.673148);
+//    fit.updatePoint(0.486111,0.661111);
+//    fit.updatePoint(0.406481,0.656482);
+//    fit.updatePoint(0.333333,0.659259);
+//    fit.updatePoint(0.266667,0.670370);
+//    fit.updatePoint(0.212037,0.688889);
+//    fit.updatePoint(0.172222,0.710185);
+//    fit.updatePoint(0.140741,0.746296);
+//    fit.updatePoint(0.127778,0.785185);
+//    fit.updatePoint(0.133333,0.822222);
+//    fit.updatePoint(0.154630,0.864815);
+//    fit.updatePoint(0.191667,0.898148);
+//    fit.updatePoint(0.253704,0.938889);
+//    fit.updatePoint(0.326852,0.966667);
+//    fit.updatePoint(0.405556,0.985185);
+//    fit.updatePoint(0.483333,0.987037);
+//    fit.updatePoint(0.563889,0.987037);
+//    fit.updatePoint(0.646296,0.975000);
+//    fit.updatePoint(0.717593,0.954630);
+//    fit.updatePoint(0.762963,0.937037);
+//    fit.updatePoint(0.799074,0.915741);
+//    fit.updatePoint(0.819444,0.893519);
+//    fit.updatePoint(0.833333,0.873148);
+//    fit.updatePoint(0.839815,0.789815);
+//    fit.updatePoint(0.836111,0.782407);
+//    result=fit.finishPoint(0.836111,0.782407);
+//    
+//    cout<<"yuyuyuyuyuyuyuyuyuyuyuyuyuyu"<<result[0]<<endl;
+//    delete [] result;
     
     
     //    for (int i=0; i<100000; i++) {
@@ -429,8 +463,52 @@ int main(int argc, char *argv[]) {
     //    p1.x=200;
     //    luo=mergedPoints;
     //    luo[0].x=200;
-    int * aa;
-    aa=new int(2);
-    cout << *aa;
+    float * result=new float[9];
+    PointF onePoint(0,10);
+    PointF twoPoint(0,0);
+    PointF threePoint(9,0);
+    PointF fourPoint(9,10);
+    bool hasCorrect1=true;
+    bool hasCorrect2=true;
+    bool hasCorrect3=true;
+    bool hasCorrect4=true;
+    if(hasCorrect1&&hasCorrect2&&hasCorrect3&&hasCorrect4){
+        float distance1=(twoPoint.y-onePoint.y)*(twoPoint.y-onePoint.y)+(twoPoint.x-onePoint.x)*(twoPoint.x-onePoint.x);
+        distance1=sqrt(distance1);
+        float distance2=(threePoint.y-twoPoint.y)*(threePoint.y-twoPoint.y)+(threePoint.x-twoPoint.x)*(threePoint.x-twoPoint.x);
+        distance2=sqrt(distance2);
+        float rate;
+        float targetDistance=(distance1+distance2)/2;
+        if(distance1>=distance2){
+            rate=distance1/distance2;
+        }else{
+            rate=distance2/distance1;
+        }
+        if(rate<1.25){
+            if(onePoint.x==twoPoint.x){
+                onePoint.y=(onePoint.y-twoPoint.y)*targetDistance/distance1+twoPoint.y;
+                fourPoint.y=onePoint.y;
+                threePoint.x=(threePoint.x-twoPoint.x)*targetDistance/distance2+twoPoint.x;
+                fourPoint.x=threePoint.x;
+            }else{
+                onePoint.x=(onePoint.x-twoPoint.x)*targetDistance/distance1+twoPoint.x;
+                fourPoint.x=onePoint.x;
+                threePoint.y=(threePoint.y-twoPoint.y)*targetDistance/distance2+twoPoint.y;
+                fourPoint.y=threePoint.y;
+            }
+        }
+    }
+    
+    result[0]=4;
+    result[1]=onePoint.x;
+    result[2]=onePoint.y;
+    result[3]=twoPoint.x;
+    result[4]=twoPoint.y;
+    result[5]=threePoint.x;
+    result[6]=threePoint.y;
+    result[7]=fourPoint.x;
+    result[8]=fourPoint.y;
+    
+    
 }
 

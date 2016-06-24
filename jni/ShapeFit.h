@@ -75,5 +75,5 @@ public:
 	~EllipseFit();
 };
 float getCorrectAngle(float angle);
-void correctTwoPoints(PointF * pointOne,PointF * pointTwo);
+bool correctTwoPoints(PointF * pointOne,PointF * pointTwo);
 #endif /* SHAPEFIT_H_ */
