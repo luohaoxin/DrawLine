@@ -17,6 +17,7 @@ using namespace std;
 #define maxEllipseError 0.00007
 #define maxEllipseErrorForBig 0.0001
 #define EllipseBigBorder 0.2
+#define EllipseLengthWidthRate 1.3
 PointF::PointF(float x, float y) {
     this->x = x;
     this->y = y;
@@ -282,6 +283,7 @@ void EllipseFit::compute() {
         BMatrix(4,0) += -xx;
         
     }
+    
     Eigen::MatrixXf XMatrix = AMatrix.inverse()*BMatrix;
     cout<<"compute "<<"X:"<<XMatrix;
     float B = XMatrix(0,0);
@@ -329,7 +331,7 @@ void EllipseFit::compute() {
     
 }
 void EllipseFit::correct(){
-    if(a/b<1.3)
+    if(a/b<EllipseLengthWidthRate)
     {
         a=(a+b)/2;
         b=a;
@@ -346,6 +348,8 @@ bool EllipseFit::checkEllipse(){
     }
 }
 void EllipseFit::clear() {
+    AMatrix.resize(5, 5);
+    BMatrix.resize(5, 1);
     AMatrix=AMatrix*0;
     BMatrix=BMatrix*0;
     errorValue=0;

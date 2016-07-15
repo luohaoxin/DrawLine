@@ -18,6 +18,7 @@ using namespace std;
 #define leastLineLongLengthSquare 0.1f
 #define maxLineFitListErrorValue 0.0005
 #define maxShapeFitListErrorValue 0.0005
+#define SquareLengthWidthRate 1.3
 BestFit::BestFit() {
 }
 BestFit::~BestFit()
@@ -132,9 +133,9 @@ float * BestFit::getTriangle()
     PointF onePoint=getCrossPoint(&lineFitList[0], &lineFitList[1]);
     PointF twoPoint=getCrossPoint(&lineFitList[1], &lineFitList[2]);
     PointF threePoint=getCrossPoint(&lineFitList[2], &lineFitList[0]);
-    correctTwoPoints(&onePoint, &twoPoint);
-    correctTwoPoints(&twoPoint, &threePoint);
-    correctTwoPoints(&threePoint, &onePoint);
+    bool hasCorrect1=correctTwoPoints(&onePoint, &twoPoint);
+    bool hasCorrect2=correctTwoPoints(&twoPoint, &threePoint);
+    bool hasCorrect3=correctTwoPoints(&threePoint, &onePoint);
     result[0]=3;
     result[1]=onePoint.x;
     result[2]=onePoint.y;
@@ -167,7 +168,7 @@ float * BestFit::getRectangle()
         }else{
             rate=distance2/distance1;
         }
-        if(rate<1.3){
+        if(rate<SquareLengthWidthRate){
             if(onePoint.x==twoPoint.x){
                 onePoint.y=(onePoint.y-twoPoint.y)*targetDistance/distance1+twoPoint.y;
                 fourPoint.y=onePoint.y;
@@ -246,20 +247,12 @@ float BestFit::getLineFitListErrorValue(){
 float * BestFit::getResult() {
     float * result;
     float lineerror=getLineFitListErrorValue();
-    //    LOGV("getLineFitListErrorValue:%f", getLineFitListErrorValue());
-    ellipseFit.compute();
-    //    LOGV("ellipseFitErrorValue:%f", ellipseFit.errorValue);
-    //    if(!isClosed)
-    //    {
-    //maybe a line
     if (lineFitList.size()
         == 1&&getLineFitListErrorValue()<maxLineFitListErrorValue) {
         result=getLine();
         cout<<"line";
         return result;
     }
-    //    }
-    //    else{
     if (lineFitList.size()
         == 4&&getLineFitListErrorValue()<maxShapeFitListErrorValue) {
         result = getRectangle();
@@ -272,7 +265,9 @@ float * BestFit::getResult() {
         cout << "triangle";
         return result;
     }
+    ellipseFit.compute();
     
+
     if (ellipseFit.checkEllipse()) {
         ellipseFit.correct();
         result = new float[6];
@@ -290,69 +285,7 @@ float * BestFit::getResult() {
         cout << "not fit";
         
     }
-    
-    
-    
-    
-    //    float * result;
-    //    if(!isClosed)
-    //    {
-    //        //maybe a line
-    //        if (lineFitList.size() == 1&&getLineFitListErrorValue()<maxLineFitListErrorValue) {
-    //            LineFit lineFit(ellipseFit.inputList);
-    //            lineFit.compute();
-    //            result=new float[5];
-    //            result[0]=1;
-    //            result[1]=lineFit.startPoint.x;
-    //            result[2]=lineFit.startPoint.y;
-    //            result[3]=lineFit.endPoint.x;
-    //            result[4]=lineFit.endPoint.y;
-    //        }
-    //        else{
-    //            result=new float[1];
-    //            result[0]=0;
-    //            cout<<"not fit";
-    //
-    //        }
-    //    }
-    //    else{
-    //        if(lineFitList.size() == 4&&getLineFitListErrorValue()<maxShapeFitListErrorValue)
-    //        {
-    //            result=getRectangle();
-    //            cout<<"rectangle";
-    //            return result;
-    //        }
-    //        if(lineFitList.size() == 3&&getLineFitListErrorValue()<maxShapeFitListErrorValue)
-    //        {
-    //            result=getTriangle();
-    //            cout<<"triangle";
-    //            return result;
-    //        }
-    //        ellipseFit.compute();
-    //        if(ellipseFit.checkEllipse())
-    //        {
-    //            ellipseFit.correct();
-    //            result=new float[6];
-    //            result[0]=2;
-    //            result[1]=ellipseFit.xc;
-    //            result[2]=ellipseFit.yc;
-    //            result[3]=ellipseFit.a;
-    //            result[4]=ellipseFit.b;
-    //            result[5]=ellipseFit.angle;
-    //            cout<<"ellipse";
-    //        }
-    //        else{
-    //
-    //
-    //                result=new float[1];
-    //                result[0]=0;
-    //                cout<<"not fit";
-    //
-    //        }
-    //
-    //
-    //    }
-    return result;
+       return result;
 }
 void BestFit::reset(){
     lineFitList.clear();
@@ -362,56 +295,56 @@ void BestFit::reset(){
     ellipseFit.minY=0;
 }
 int main(int argc, char *argv[]) {
-//    BestFit fit;
-//    float * result;
-//    fit.startPoint(0.813889,0.786111);
-//    fit.updatePoint(0.811111,0.782407);
-//    fit.updatePoint(0.800000,0.770370);
-//    fit.updatePoint(0.772222,0.747222);
-//    fit.updatePoint(0.722222,0.719444);
-//    fit.updatePoint(0.650926,0.693519);;
-//    fit.updatePoint(0.568519,0.673148);
-//    fit.updatePoint(0.486111,0.661111);
-//    fit.updatePoint(0.406481,0.656482);
-//    fit.updatePoint(0.333333,0.659259);
-//    fit.updatePoint(0.266667,0.670370);
-//    fit.updatePoint(0.212037,0.688889);
-//    fit.updatePoint(0.172222,0.710185);
-//    fit.updatePoint(0.140741,0.746296);
-//    fit.updatePoint(0.127778,0.785185);
-//    fit.updatePoint(0.133333,0.822222);
-//    fit.updatePoint(0.154630,0.864815);
-//    fit.updatePoint(0.191667,0.898148);
-//    fit.updatePoint(0.253704,0.938889);
-//    fit.updatePoint(0.326852,0.966667);
-//    fit.updatePoint(0.405556,0.985185);
-//    fit.updatePoint(0.483333,0.987037);
-//    fit.updatePoint(0.563889,0.987037);
-//    fit.updatePoint(0.646296,0.975000);
-//    fit.updatePoint(0.717593,0.954630);
-//    fit.updatePoint(0.762963,0.937037);
-//    fit.updatePoint(0.799074,0.915741);
-//    fit.updatePoint(0.819444,0.893519);
-//    fit.updatePoint(0.833333,0.873148);
-//    fit.updatePoint(0.839815,0.789815);
-//    fit.updatePoint(0.836111,0.782407);
-//    result=fit.finishPoint(0.836111,0.782407);
-//    
-//    cout<<"yuyuyuyuyuyuyuyuyuyuyuyuyuyu"<<result[0]<<endl;
-//    delete [] result;
+    BestFit fit;
+    float * result;
+    fit.startPoint(0.813889,0.786111);
+    fit.updatePoint(0.811111,0.782407);
+    fit.updatePoint(0.800000,0.770370);
+    fit.updatePoint(0.772222,0.747222);
+    fit.updatePoint(0.722222,0.719444);
+    fit.updatePoint(0.650926,0.693519);;
+    fit.updatePoint(0.568519,0.673148);
+    fit.updatePoint(0.486111,0.661111);
+    fit.updatePoint(0.406481,0.656482);
+    fit.updatePoint(0.333333,0.659259);
+    fit.updatePoint(0.266667,0.670370);
+    fit.updatePoint(0.212037,0.688889);
+    fit.updatePoint(0.172222,0.710185);
+    fit.updatePoint(0.140741,0.746296);
+    fit.updatePoint(0.127778,0.785185);
+    fit.updatePoint(0.133333,0.822222);
+    fit.updatePoint(0.154630,0.864815);
+    fit.updatePoint(0.191667,0.898148);
+    fit.updatePoint(0.253704,0.938889);
+    fit.updatePoint(0.326852,0.966667);
+    fit.updatePoint(0.405556,0.985185);
+    fit.updatePoint(0.483333,0.987037);
+    fit.updatePoint(0.563889,0.987037);
+    fit.updatePoint(0.646296,0.975000);
+    fit.updatePoint(0.717593,0.954630);
+    fit.updatePoint(0.762963,0.937037);
+    fit.updatePoint(0.799074,0.915741);
+    fit.updatePoint(0.819444,0.893519);
+    fit.updatePoint(0.833333,0.873148);
+    fit.updatePoint(0.839815,0.789815);
+    fit.updatePoint(0.836111,0.782407);
+    result=fit.finishPoint(0.836111,0.782407);
+    
+    cout<<"yuyuyuyuyuyuyuyuyuyuyuyuyuyu"<<result[0]<<endl;
+    delete [] result;
     
     
-    //    for (int i=0; i<100000; i++) {
-    //        fit.startPoint(0.1,0.1);
-    //        fit.updatePoint(0.2,0.2);
-    //        fit.updatePoint(0.21,0.22);
-    //        fit.updatePoint(0.314,0.32);
-    //        fit.updatePoint(0.41,0.424);
-    //        fit.updatePoint(0.514,0.52);
-    //        fit.updatePoint(0.55, 0.554);
-    //        result= fit.finishPoint(0.554, 0.454);
-    //        delete [] result;
-    //    }
+        for (int i=0; i<100000; i++) {
+            fit.startPoint(0.1,0.1);
+            fit.updatePoint(0.2,0.2);
+            fit.updatePoint(0.21,0.22);
+            fit.updatePoint(0.314,0.32);
+            fit.updatePoint(0.41,0.424);
+            fit.updatePoint(0.514,0.52);
+            fit.updatePoint(0.55, 0.554);
+            result= fit.finishPoint(0.554, 0.454);
+            delete [] result;
+        }
     //    for (int i=0; i<100000; i++) {
     //        fit.startPoint(0.1,0.1);
     //        fit.updatePoint(0.2,0.2);
@@ -463,51 +396,6 @@ int main(int argc, char *argv[]) {
     //    p1.x=200;
     //    luo=mergedPoints;
     //    luo[0].x=200;
-    float * result=new float[9];
-    PointF onePoint(0,10);
-    PointF twoPoint(0,0);
-    PointF threePoint(9,0);
-    PointF fourPoint(9,10);
-    bool hasCorrect1=true;
-    bool hasCorrect2=true;
-    bool hasCorrect3=true;
-    bool hasCorrect4=true;
-    if(hasCorrect1&&hasCorrect2&&hasCorrect3&&hasCorrect4){
-        float distance1=(twoPoint.y-onePoint.y)*(twoPoint.y-onePoint.y)+(twoPoint.x-onePoint.x)*(twoPoint.x-onePoint.x);
-        distance1=sqrt(distance1);
-        float distance2=(threePoint.y-twoPoint.y)*(threePoint.y-twoPoint.y)+(threePoint.x-twoPoint.x)*(threePoint.x-twoPoint.x);
-        distance2=sqrt(distance2);
-        float rate;
-        float targetDistance=(distance1+distance2)/2;
-        if(distance1>=distance2){
-            rate=distance1/distance2;
-        }else{
-            rate=distance2/distance1;
-        }
-        if(rate<1.25){
-            if(onePoint.x==twoPoint.x){
-                onePoint.y=(onePoint.y-twoPoint.y)*targetDistance/distance1+twoPoint.y;
-                fourPoint.y=onePoint.y;
-                threePoint.x=(threePoint.x-twoPoint.x)*targetDistance/distance2+twoPoint.x;
-                fourPoint.x=threePoint.x;
-            }else{
-                onePoint.x=(onePoint.x-twoPoint.x)*targetDistance/distance1+twoPoint.x;
-                fourPoint.x=onePoint.x;
-                threePoint.y=(threePoint.y-twoPoint.y)*targetDistance/distance2+twoPoint.y;
-                fourPoint.y=threePoint.y;
-            }
-        }
-    }
-    
-    result[0]=4;
-    result[1]=onePoint.x;
-    result[2]=onePoint.y;
-    result[3]=twoPoint.x;
-    result[4]=twoPoint.y;
-    result[5]=threePoint.x;
-    result[6]=threePoint.y;
-    result[7]=fourPoint.x;
-    result[8]=fourPoint.y;
     
     
 }
