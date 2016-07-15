@@ -232,9 +232,13 @@ void EllipseFit::updateMinXY(float x,float y,bool isFirst){
     if(isFirst){
         minX=x;
         minY=y;
+        maxX=x;
+        maxY=y;
     }else{
         minX=minX<x? minX:x;
         minY=minY<y? minY:y;
+        maxX=maxX>x? maxX:x;
+        maxY=maxY>y? maxY:y;
     }
 }
 void EllipseFit::compute() {
@@ -342,6 +346,7 @@ bool EllipseFit::checkEllipse(){
     if(errorValue<(a*b>EllipseBigBorder? maxEllipseErrorForBig:maxEllipseError))
     {
         return true;
+        
     }
     else {
         return false;
@@ -353,6 +358,10 @@ void EllipseFit::clear() {
     AMatrix=AMatrix*0;
     BMatrix=BMatrix*0;
     errorValue=0;
+    minX=0;
+    minY=0;
+    maxX=0;
+    maxY=0;
     inputList.clear();
 }
 EllipseFit::~EllipseFit() {

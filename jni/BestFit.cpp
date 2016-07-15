@@ -112,13 +112,18 @@ bool BestFit::mergeLinesIfNeed(int oneIndex, int twoIndex) {
 }
 
 float * BestFit::getLine(){
+    float * result;
     LineFit lineFit(ellipseFit.inputList);
     lineFit.compute();
     lineFit.setTwoPoint();
     lineFit.correct();
+    if(isBeyondBond(lineFit.startPoint.x, lineFit.startPoint.y)||
+       isBeyondBond(lineFit.endPoint.x, lineFit.endPoint.y)){
+        result = NULL;
+        return result;
+    }
     
-    
-    float * result = new float[5];
+    result = new float[5];
     result[0] = 1;
     result[1] = lineFit.startPoint.x;
     result[2] = lineFit.startPoint.y;
@@ -129,13 +134,20 @@ float * BestFit::getLine(){
 }
 float * BestFit::getTriangle()
 {
-    float * result=new float[7];
+    float * result;
     PointF onePoint=getCrossPoint(&lineFitList[0], &lineFitList[1]);
     PointF twoPoint=getCrossPoint(&lineFitList[1], &lineFitList[2]);
     PointF threePoint=getCrossPoint(&lineFitList[2], &lineFitList[0]);
+    if(isBeyondBond(onePoint.x, onePoint.y)||
+       isBeyondBond(twoPoint.x, twoPoint.y)||
+       isBeyondBond(threePoint.x, threePoint.y)){
+        result = NULL;
+        return result;
+    }
     bool hasCorrect1=correctTwoPoints(&onePoint, &twoPoint);
     bool hasCorrect2=correctTwoPoints(&twoPoint, &threePoint);
     bool hasCorrect3=correctTwoPoints(&threePoint, &onePoint);
+    result=new float[7];
     result[0]=3;
     result[1]=onePoint.x;
     result[2]=onePoint.y;
@@ -147,11 +159,19 @@ float * BestFit::getTriangle()
 }
 float * BestFit::getRectangle()
 {
-    float * result=new float[9];
+    float * result;
     PointF onePoint=getCrossPoint(&lineFitList[0], &lineFitList[1]);
     PointF twoPoint=getCrossPoint(&lineFitList[1], &lineFitList[2]);
     PointF threePoint=getCrossPoint(&lineFitList[2], &lineFitList[3]);
     PointF fourPoint=getCrossPoint(&lineFitList[3], &lineFitList[0]);
+    if(isBeyondBond(onePoint.x, onePoint.y)||
+       isBeyondBond(twoPoint.x, twoPoint.y)||
+       isBeyondBond(threePoint.x, threePoint.y)||
+       isBeyondBond(fourPoint.x, fourPoint.y)){
+        result = NULL;
+        return result;
+    }
+    
     bool hasCorrect1=correctTwoPoints(&onePoint, &twoPoint);
     bool hasCorrect2=correctTwoPoints(&twoPoint, &threePoint);
     bool hasCorrect3=correctTwoPoints(&threePoint, &fourPoint);
@@ -182,7 +202,7 @@ float * BestFit::getRectangle()
             }
         }
     }
-    
+    result=new float[9];
     result[0]=4;
     result[1]=onePoint.x;
     result[2]=onePoint.y;
@@ -243,6 +263,23 @@ float BestFit::getLineFitListErrorValue(){
     }
     return errorSum/ellipseFit.inputList.size();
 }
+bool BestFit::isBeyondBond(float x,float y){
+    float acceptDeltaX=(ellipseFit.maxX-ellipseFit.minX)/2;
+    float acceptDeltaY=(ellipseFit.maxY-ellipseFit.minY)/2;
+    if(x>ellipseFit.maxX&&x-ellipseFit.maxX>acceptDeltaX){
+        return true;
+    }
+    if(x<ellipseFit.minX&&ellipseFit.minX-x>acceptDeltaX){
+        return true;
+    }
+    if(y>ellipseFit.maxY&&y-ellipseFit.maxY>acceptDeltaY){
+        return true;
+    }
+    if(y<ellipseFit.minY&&ellipseFit.minY-y>acceptDeltaY){
+        return true;
+    }
+    return false;
+}
 //remeber to delete [] result ,after you use result
 float * BestFit::getResult() {
     float * result;
@@ -250,34 +287,57 @@ float * BestFit::getResult() {
     if (lineFitList.size()
         == 1&&getLineFitListErrorValue()<maxLineFitListErrorValue) {
         result=getLine();
-        cout<<"line";
-        return result;
+        if(result){
+            cout<<"line";
+            return result;
+        }
     }
     if (lineFitList.size()
         == 4&&getLineFitListErrorValue()<maxShapeFitListErrorValue) {
         result = getRectangle();
-        cout << "rectangle";
-        return result;
+        if(result){
+            cout << "rectangle";
+            return result;
+        }
     }
     if (lineFitList.size()
         == 3&&getLineFitListErrorValue()<maxShapeFitListErrorValue) {
         result = getTriangle();
-        cout << "triangle";
-        return result;
+        if(result){
+            cout << "triangle";
+            return result;
+        }
     }
     ellipseFit.compute();
     
-
+    
     if (ellipseFit.checkEllipse()) {
-        ellipseFit.correct();
-        result = new float[6];
-        result[0] = 2;
-        result[1] = ellipseFit.xc;
-        result[2] = ellipseFit.yc;
-        result[3] = ellipseFit.a;
-        result[4] = ellipseFit.b;
-        result[5] = ellipseFit.angle;
-        cout << "ellipse";
+        float x1=ellipseFit.xc+ellipseFit.a*cos(ellipseFit.angle);
+        float y1=ellipseFit.yc+ellipseFit.a*sin(ellipseFit.angle);
+        float x2=ellipseFit.xc-ellipseFit.a*cos(ellipseFit.angle);
+        float y2=ellipseFit.yc-ellipseFit.a*sin(ellipseFit.angle);
+        float x3=ellipseFit.xc+ellipseFit.b*cos(ellipseFit.angle);
+        float y3=ellipseFit.yc+ellipseFit.b*sin(ellipseFit.angle);
+        float x4=ellipseFit.xc-ellipseFit.b*cos(ellipseFit.angle);
+        float y4=ellipseFit.yc-ellipseFit.b*sin(ellipseFit.angle);
+        if(isBeyondBond(x1, y1)||
+           isBeyondBond(x2, y2)||
+           isBeyondBond(x3, y3)||
+           isBeyondBond(x4, y4)){
+            result = new float[1];
+            result[0] = 0;
+            cout << "not fit";
+        }else{
+            ellipseFit.correct();
+            result = new float[6];
+            result[0] = 2;
+            result[1] = ellipseFit.xc;
+            result[2] = ellipseFit.yc;
+            result[3] = ellipseFit.a;
+            result[4] = ellipseFit.b;
+            result[5] = ellipseFit.angle;
+            cout << "ellipse";
+        }
     } else {
         
         result = new float[1];
@@ -285,14 +345,13 @@ float * BestFit::getResult() {
         cout << "not fit";
         
     }
-       return result;
+    return result;
 }
 void BestFit::reset(){
     lineFitList.clear();
     lineList.clear();
     ellipseFit.clear();
-    ellipseFit.minX=0;
-    ellipseFit.minY=0;
+    
 }
 int main(int argc, char *argv[]) {
     BestFit fit;
@@ -334,17 +393,17 @@ int main(int argc, char *argv[]) {
     delete [] result;
     
     
-        for (int i=0; i<100000; i++) {
-            fit.startPoint(0.1,0.1);
-            fit.updatePoint(0.2,0.2);
-            fit.updatePoint(0.21,0.22);
-            fit.updatePoint(0.314,0.32);
-            fit.updatePoint(0.41,0.424);
-            fit.updatePoint(0.514,0.52);
-            fit.updatePoint(0.55, 0.554);
-            result= fit.finishPoint(0.554, 0.454);
-            delete [] result;
-        }
+//    for (int i=0; i<100000; i++) {
+//        fit.startPoint(0.1,0.1);
+//        fit.updatePoint(0.2,0.2);
+//        fit.updatePoint(0.21,0.22);
+//        fit.updatePoint(0.314,0.32);
+//        fit.updatePoint(0.41,0.424);
+//        fit.updatePoint(0.514,0.52);
+//        fit.updatePoint(0.55, 0.554);
+//        result= fit.finishPoint(0.554, 0.454);
+//        delete [] result;
+//    }
     //    for (int i=0; i<100000; i++) {
     //        fit.startPoint(0.1,0.1);
     //        fit.updatePoint(0.2,0.2);

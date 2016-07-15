@@ -28,7 +28,7 @@ public:
 	float * finishPoint(float x, float y);
 	void inputPoint(float x, float y, bool isFinished);
     float getLineFitListErrorValue();
-    
+    bool isBeyondBond(float x,float y);
 	float * getResult();
     void reset();
     ~BestFit();

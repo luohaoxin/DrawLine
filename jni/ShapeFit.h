@@ -64,7 +64,7 @@ public:
     MatrixXf AMatrix;
     MatrixXf BMatrix;
     float xc, yc, a, b, angle;
-    float minX,minY;
+    float minX,minY,maxX,maxY;
     EllipseFit();
     void updateMinXY(float x,float y,bool isFirst);
     void setInputPoint(vector<PointF> input);
