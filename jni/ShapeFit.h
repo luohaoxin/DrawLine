@@ -61,8 +61,6 @@ public:
 };
 class EllipseFit: public ShapeFit {
 public:
-    MatrixXf AMatrix;
-    MatrixXf BMatrix;
     float xc, yc, a, b, angle;
     float minX,minY,maxX,maxY;
     EllipseFit();
