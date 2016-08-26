@@ -16,9 +16,9 @@ using Eigen::MatrixXf;
 using namespace std;
 #define MAX_LINE_ANGLE_DIFFER 25
 #define leastLineLongLengthSquare 0.1f
-#define maxLineFitListErrorValue 0.0005
-#define maxShapeFitListErrorValue 0.0005
-#define SquareLengthWidthRate 1.3
+#define maxLineFitListErrorValue 0.0005f
+#define maxShapeFitListErrorValue 0.0005f
+#define SquareLengthWidthRate 1.3f
 BestFit::BestFit() {
 }
 BestFit::~BestFit()
@@ -356,26 +356,34 @@ void BestFit::reset(){
 int main(int argc, char *argv[]) {
     BestFit fit;
     float * result;
-    fit.startPoint(0.180837,0.040091);
-    fit.updatePoint(0.180046,0.040091);
-    fit.updatePoint(0.176881,0.040882);
-    fit.updatePoint(0.171606,0.042729);
-    fit.updatePoint(0.167913,0.043520);
-    fit.updatePoint(0.163957,0.045366);
-    fit.updatePoint(0.147604,0.088886);
-    fit.updatePoint(0.150505,0.099436);
-    fit.updatePoint(0.155780,0.105239);
-    fit.updatePoint(0.169232,0.109195);
-    fit.updatePoint(0.182684,0.106822);
-    fit.updatePoint(0.190860,0.096008);
-    fit.updatePoint(0.196135,0.079391);
-    fit.updatePoint(0.196927,0.070423);
-    fit.updatePoint(0.196399,0.064884);
-    fit.updatePoint(0.185849,0.050378);
-    fit.updatePoint(0.176881,0.043784);
-    fit.updatePoint(0.173452,0.042729);
+    fit.startPoint(0.686187,0.416736);
+    fit.updatePoint(0.685924,0.416736);
+    fit.updatePoint(0.681967,0.426759);
+    fit.updatePoint(0.678538,0.445222);
+    fit.updatePoint(0.678011,0.483467);
+    fit.updatePoint(0.680121,0.498237);
+    fit.updatePoint(0.683814,0.507732);
+    fit.updatePoint(0.688561,0.513271);
+    fit.updatePoint(0.697001,0.517228);
+    fit.updatePoint(0.706760,0.516964);
+    fit.updatePoint(0.717575,0.511952);
+    fit.updatePoint(0.726542,0.503776);
+    fit.updatePoint(0.735510,0.489533);
+    fit.updatePoint(0.741576,0.470806);
+    fit.updatePoint(0.744741,0.449442);
+    fit.updatePoint(0.745533,0.430451);
+    fit.updatePoint(0.744214,0.415681);
+    fit.updatePoint(0.741313,0.405658);
+    fit.updatePoint(0.737620,0.400647);
+    fit.updatePoint(0.729971,0.396954);
+    fit.updatePoint(0.720212,0.396427);
+    fit.updatePoint(0.709398,0.399328);
+    fit.updatePoint(0.700694,0.403812);
+    fit.updatePoint(0.693045,0.411197);
+    fit.updatePoint(0.685660,0.424649);
     
-    result=fit.finishPoint(0.173452,0.042729);;
+    
+    result=fit.finishPoint(0.685660,0.424649);
     
     cout<<"yuyuyuyuyuyuyuyuyuyuyuyuyuyu"<<result[0]<<endl;
     delete [] result;
@@ -424,18 +432,7 @@ int main(int argc, char *argv[]) {
     //
     //    cout<<"result:"<<result[0]<<" "<<result[1]<<endl;
     
-    //    MatrixXf m(2,2);
-    //    m(0,0) = 2;
-    //    m(0,1) = 1;
-    //    m(1,0) = 1;
-    //    m(1,1) = 2;
-    //    m=m.inverse();
-    //    Eigen::MatrixXf m2(2,1);
-    //    m2(0,0)=3;
-    //    m2(1,0)=3;
-    //    m2=m*m2;
-    //    std::cout << m2<< endl;
-    //    m.inverse();
+            //    m.inverse();
     //    vector<PointF> luo;
     //    vector<PointF> mergedPoints;
     //    PointF p1(100, 100);
@@ -443,7 +440,8 @@ int main(int argc, char *argv[]) {
     //    p1.x=200;
     //    luo=mergedPoints;
     //    luo[0].x=200;
-    
+    MatrixXf m(5, 5);
+        cout<<m;
     
 }
 
